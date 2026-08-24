@@ -1,0 +1,203 @@
+@{
+    ViewData["Title"] = "Ayarlar";
+}
+
+<div class="container py-4 fade-in">
+    
+    <!-- Üst Başlık Bölümü -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1" style="color: var(--primary-dark);">Hesap Ayarları</h4>
+            <p class="text-muted mb-0">Kişisel bilgilerinizi, şifrenizi ve bildirim tercihlerinizi yönetin.</p>
+        </div>
+    </div>
+
+    <!-- Başarı/Hata Mesajları -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-sm" role="alert" style="background: rgba(16,185,129,0.1); color: #065f46;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>Başarılı!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 border-0 shadow-sm" role="alert" style="background: rgba(255,0,127,0.1); color: #9f1239;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Hata!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- SOL MENÜ: SEKMELER GİBİ GÖRÜNEN KART -->
+        <div class="col-lg-3">
+            <div class="card glass-card border-0 h-100">
+                <div class="card-body p-0">
+                    <div class="p-4 text-center border-bottom border-light">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-size: 2rem; font-weight: bold; box-shadow: 0 8px 16px rgba(125,42,232,0.3);">
+                            @((ViewBag.UserName != null && ViewBag.UserName.Length >= 2) ? ViewBag.UserName.Substring(0, 2).ToUpper() : "US")
+                        </div>
+                        <h6 class="fw-bold mb-1">@(ViewBag.UserName ?? "Mevcut Kullanıcı")</h6>
+                        <small class="text-muted">Müşteri Profili</small>
+                    </div>
+                    <div class="list-group list-group-flush border-0 p-2">
+                        <a href="#profileSection" class="list-group-item list-group-item-action border-0 rounded-3 mb-1 active-menu-item" style="background: rgba(125,42,232,0.1); color: var(--primary-dark); font-weight: 600;">
+                            <i class="bi bi-person-fill me-2"></i> Profil Bilgileri
+                        </a>
+                        <a href="#passwordSection" class="list-group-item list-group-item-action border-0 rounded-3 mb-1 text-secondary">
+                            <i class="bi bi-shield-lock-fill me-2"></i> Şifre Değiştir
+                        </a>
+                        <a href="#notificationSection" class="list-group-item list-group-item-action border-0 rounded-3 text-secondary">
+                            <i class="bi bi-bell-fill me-2"></i> Bildirimler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ İÇERİK: FORMLAR -->
+        <div class="col-lg-9">
+            
+            <!-- Profil Bilgileri -->
+            <div id="profileSection" class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 48px; height: 48px; background: rgba(0,196,204,0.1); color: var(--secondary); font-size: 1.5rem;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Profil Bilgileri</h5>
+                            <small class="text-muted">Kişisel bilgilerinizi buradan güncelleyin</small>
+                        </div>
+                    </div>
+
+                    <form asp-action="UpdateProfile" method="post">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Ad Soyad</label>
+                                <input type="text" name="fullName" class="form-control" value="@ViewBag.UserName" placeholder="Adınızı girin" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Telefon (İsteğe Bağlı)</label>
+                                <input type="text" name="phone" class="form-control" value="@ViewBag.UserPhone" placeholder="05XX XXX XX XX">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">E-posta Adresi</label>
+                                <input type="email" name="email" class="form-control" value="@ViewBag.UserEmail" required>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-4 shadow-sm" style="background: linear-gradient(135deg, var(--secondary), var(--primary)); border: none;">
+                                    Değişiklikleri Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Şifre Değiştirme -->
+            <div id="passwordSection" class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 48px; height: 48px; background: rgba(255,0,127,0.1); color: var(--danger); font-size: 1.5rem;">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Şifre Değiştir</h5>
+                            <small class="text-muted">Hesabınızın güvenliği için güçlü bir şifre kullanın</small>
+                        </div>
+                    </div>
+
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">Mevcut Şifre</label>
+                                <input type="password" name="currentPassword" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Yeni Şifre</label>
+                                <input type="password" name="newPassword" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Yeni Şifre (Tekrar)</label>
+                                <input type="password" name="confirmPassword" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-danger px-4 shadow-sm" style="background: var(--danger); border: none;">
+                                    Şifreyi Güncelle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bildirim Tercihleri (Mock) -->
+            <div id="notificationSection" class="card border-0 shadow-sm rounded-4 mb-5">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 48px; height: 48px; background: rgba(16,185,129,0.1); color: var(--success); font-size: 1.5rem;">
+                            <i class="bi bi-bell"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Bildirim Tercihleri</h5>
+                            <small class="text-muted">Sistemden hangi kanallarla haber almak istiyorsunuz?</small>
+                        </div>
+                    </div>
+
+                    <form asp-action="UpdateNotifications" method="post">
+                        <div class="list-group list-group-flush border-0">
+                            <!-- E-Posta -->
+                            <div class="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">E-Posta Bildirimleri</h6>
+                                    <small class="text-muted">Randevu hatırlatmaları ve kampanya e-postaları alın.</small>
+                                </div>
+                                <div class="form-check form-switch" style="font-size: 1.5rem;">
+                                    <input class="form-check-input" type="checkbox" name="emailNotif" value="true" @(ViewBag.EmailNotif == "true" ? "checked" : "") role="switch">
+                                </div>
+                            </div>
+                            <!-- SMS -->
+                            <div class="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">SMS Bildirimleri</h6>
+                                    <small class="text-muted">Randevu saatiniz yaklaşırken telefonunuza mesaj alın.</small>
+                                </div>
+                                <div class="form-check form-switch" style="font-size: 1.5rem;">
+                                    <input class="form-check-input" type="checkbox" name="smsNotif" value="true" @(ViewBag.SmsNotif == "true" ? "checked" : "") role="switch">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-outline-primary px-4 shadow-sm" style="border-width: 2px;">
+                                Tercihleri Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ayarlar sayfasına özel küçük animasyonlar */
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-switch .form-check-input:checked {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+    }
+</style>

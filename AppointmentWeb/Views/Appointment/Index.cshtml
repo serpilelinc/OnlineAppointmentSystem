@@ -1,0 +1,272 @@
+@model List<AppointmentWeb.Models.AppointmentViewModel>
+
+@{
+    ViewData["Title"] = "Randevular";
+}
+
+<h2>Randevular</h2>
+<form method="get" asp-action="Index" class="mb-4">
+    <div class="row g-2">
+
+        <div class="col-md-4">
+            <input type="text"
+                   name="search"
+                   value="@ViewBag.Search"
+                   class="form-control"
+                   placeholder="Müşteri adı veya e-posta ara..." />
+        </div>
+
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Tüm Durumlar</option>
+
+                <option value="Pending"
+                        selected="@(ViewBag.Status == "Pending")">
+                    Bekliyor
+                </option>
+
+                <option value="Confirmed"
+                        selected="@(ViewBag.Status == "Confirmed")">
+                    Onaylandı
+                </option>
+
+                <option value="Completed"
+                        selected="@(ViewBag.Status == "Completed")">
+                    Tamamlandı
+                </option>
+
+                <option value="Cancelled"
+                        selected="@(ViewBag.Status == "Cancelled")">
+                    İptal Edildi
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <input type="date"
+                   name="startDate"
+                   value="@ViewBag.StartDate"
+                   class="form-control"
+                   title="Başlangıç tarihi" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="date"
+                   name="endDate"
+                   value="@ViewBag.EndDate"
+                   class="form-control"
+                   title="Bitiş tarihi" />
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit"
+                    class="btn btn-filter">
+                Filtrele
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-clear">
+                Temizle
+            </a>
+        </div>
+
+    </div>
+</form>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Müşteri</th>
+            <th>E-posta</th>
+            <th>Tarih</th>
+            <th>Hizmet</th>
+            <th>Hizmet Veren</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var appointment in Model)
+    {
+        <tr>
+            <td>@appointment.Id</td>
+            <td>@appointment.CustomerName</td>
+            <td>@appointment.CustomerEmail</td>
+            <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>@appointment.ServiceTypeName</td>
+            <td>@appointment.StaffName</td>
+            <td>
+    @if (appointment.Status == "Pending")
+    {
+        <span class="badge bg-warning text-dark">
+            Bekliyor
+        </span>
+    }
+    else if (appointment.Status == "Confirmed")
+    {
+        <span class="badge bg-primary">
+            Onaylandı
+        </span>
+    }
+    else if (appointment.Status == "Completed")
+    {
+        <span class="badge bg-success">
+            Tamamlandı
+        </span>
+    }
+    else if (appointment.Status == "Cancelled")
+    {
+        <span class="badge bg-danger">
+            İptal Edildi
+        </span>
+    }
+    else
+    {
+        <span class="badge bg-secondary">
+            @appointment.Status
+        </span>
+    }
+</td>
+
+            <td>
+    <a asp-action="Edit"
+       asp-route-id="@appointment.Id"
+       class="btn btn-warning btn-sm">
+        ✎ Düzenle
+    </a>
+    @if (appointment.Status == "Pending")
+{
+    <form asp-action="UpdateStatus"
+          method="post"
+          class="d-inline">
+
+        <input type="hidden"
+               name="id"
+               value="@appointment.Id" />
+
+        <input type="hidden"
+               name="status"
+               value="Confirmed" />
+
+        <button type="submit"
+                class="btn btn-primary btn-sm">
+            ✓ Onayla
+        </button>
+    </form>
+}
+
+@if (appointment.Status == "Confirmed" && appointment.AppointmentDate <= DateTime.Now)
+{
+    <form asp-action="UpdateStatus"
+          method="post"
+          class="d-inline">
+
+        <input type="hidden"
+               name="id"
+               value="@appointment.Id" />
+
+        <input type="hidden"
+               name="status"
+               value="Completed" />
+
+        <button type="submit"
+                class="btn btn-success btn-sm">
+            Tamamla
+        </button>
+    </form>
+}
+
+@if (appointment.Status != "Cancelled" &&
+     appointment.Status != "Completed")
+{
+    <form asp-action="UpdateStatus"
+          method="post"
+          class="d-inline">
+
+        <input type="hidden"
+               name="id"
+               value="@appointment.Id" />
+
+        <input type="hidden"
+               name="status"
+               value="Cancelled" />
+
+        <button type="submit"
+                class="btn btn-outline-danger btn-sm">
+            İptal Et
+        </button>
+    </form>
+}
+
+    <form asp-action="Delete"
+          asp-route-id="@appointment.Id"
+          method="post"
+          class="d-inline"
+          onsubmit="return confirm('Bu randevuyu silmek istediğinize emin misiniz?');">
+
+        <button type="submit"
+                class="btn btn-danger btn-sm">
+            🗑Sil
+        </button>
+    </form>
+</td>
+        </tr>
+    }
+</tbody>
+</table>
+@if (ViewBag.TotalPages > 1)
+{
+    <nav aria-label="Randevu sayfaları">
+        <ul class="pagination justify-content-center">
+
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage - 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-status="@ViewBag.Status"
+                       asp-route-startDate="@ViewBag.StartDate"
+                       asp-route-endDate="@ViewBag.EndDate">
+                        Önceki
+                    </a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-status="@ViewBag.Status"
+                       asp-route-startDate="@ViewBag.StartDate"
+                       asp-route-endDate="@ViewBag.EndDate">
+                        @i
+                    </a>
+
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage + 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-status="@ViewBag.Status"
+                       asp-route-startDate="@ViewBag.StartDate"
+                       asp-route-endDate="@ViewBag.EndDate">
+                        Sonraki
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </nav>
+}

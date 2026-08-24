@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - RandevuPlus</title>
+
+    <script type="importmap"></script>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/AppointmentWeb.styles.css"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+
+@{
+    var userName = Context.Session.GetString("UserName");
+    var userRole = Context.Session.GetString("UserRole");
+    var isLoggedIn = !string.IsNullOrWhiteSpace(userName);
+}
+
+@if (!isLoggedIn)
+{
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-sm navbar-dark glass-navbar mb-4">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center fw-bold text-white text-decoration-none" asp-controller="Home" asp-action="Index" style="font-size: 1.5rem; letter-spacing: -0.5px;">
+                    <div class="d-flex align-items-center justify-content-center me-2" style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(125,42,232,0.4);">
+                        <i class="bi bi-calendar-check-fill text-white" style="font-size: 1.3rem;"></i>
+                    </div>
+                    <span>Randevu<span style="color: var(--secondary);">Plus</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Giriş Yap</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Auth" asp-action="Register">Kayıt Ol</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - RandevuPlus
+        </div>
+    </footer>
+}
+else
+{
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="glass-sidebar" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-white border-bottom border-light">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-white d-flex align-items-center justify-content-center fw-bold" style="letter-spacing: -0.5px;">
+                    <div class="d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(125,42,232,0.4);">
+                        <i class="bi bi-calendar-check-fill text-white" style="font-size: 1.4rem;"></i>
+                    </div>
+                    <span>Randevu<span style="color: var(--secondary);">Plus</span></span>
+                </a>
+            </div>
+            <div class="list-group list-group-flush mt-3 px-3">
+                
+                @if (userRole == "Customer")
+                {
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Appointment" asp-action="Create">
+                        <i class="bi bi-plus-square"></i> Yeni Randevu
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Appointment" asp-action="MyAppointments">
+                        <i class="bi bi-calendar-check"></i> Randevularım
+                    </a>
+                }
+
+                @if (userRole == "Admin")
+                {
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Appointment" asp-action="Index">
+                        <i class="bi bi-calendar3"></i> Tüm Randevular
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Staff" asp-action="Index">
+                        <i class="bi bi-people"></i> Hizmet Verenler
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="ServiceType" asp-action="Index">
+                        <i class="bi bi-tools"></i> Hizmetler
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Category" asp-action="Index">
+                        <i class="bi bi-grid"></i> Kategoriler
+                    </a>
+                }
+
+                @if (userRole == "Staff")
+                {
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Appointment" asp-action="StaffAppointments">
+                        <i class="bi bi-calendar-check"></i> Randevularım
+                    </a>
+                    <a class="sidebar-link mb-2 rounded-3" asp-controller="Staff" asp-action="MyWorkingHours">
+                        <i class="bi bi-clock"></i> Çalışma Saatlerim
+                    </a>
+                }
+                
+                <hr class="border-light opacity-25 my-3" />
+                <a class="sidebar-link mb-2 rounded-3" asp-controller="Settings" asp-action="Index">
+                    <i class="bi bi-gear"></i> Ayarlar
+                </a>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="flex-grow-1">
+            
+            <nav class="navbar navbar-expand-lg glass-navbar border-bottom px-4">
+                <div class="d-flex w-100 align-items-center">
+                    <button class="btn btn-primary d-md-none rounded-circle shadow-sm me-3" id="menu-toggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="ms-auto d-flex align-items-center">
+                        <div class="d-none d-md-block me-3 text-end">
+                            <span class="text-dark fw-bold d-block" style="line-height: 1.2;">@userName</span>
+                            <small class="text-primary fw-medium">@userRole</small>
+                        </div>
+                        <a class="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2" asp-controller="Auth" asp-action="Logout">
+                            <i class="bi bi-box-arrow-right"></i> Çıkış
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4 dashboard-main-content">
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+
+        </div>
+    </div>
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="~/js/site.js"
+        asp-append-version="true">
+</script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Global SweetAlert2 Logic
+    var successMsg = '@Html.Raw(TempData["SuccessMessage"])';
+    var errorMsg = '@Html.Raw(TempData["ErrorMessage"])';
+
+    if (successMsg && successMsg !== '') {
+        Swal.fire({
+            icon: 'success',
+            title: 'Harika!',
+            text: successMsg,
+            confirmButtonColor: 'var(--secondary)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdrop: 'rgba(125,42,232,0.15)',
+            customClass: {
+                popup: 'rounded-4 shadow-lg'
+            }
+        });
+        // Eski tip düz yeşil/kırmızı mesajları gizle
+        setTimeout(() => {
+            document.querySelectorAll('.alert-success, .alert-danger').forEach(el => el.style.display = 'none');
+        }, 10);
+    }
+    
+    if (errorMsg && errorMsg !== '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: errorMsg,
+            confirmButtonColor: 'var(--primary)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdrop: 'rgba(125,42,232,0.15)',
+            customClass: {
+                popup: 'rounded-4 shadow-lg'
+            }
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.alert-success, .alert-danger').forEach(el => el.style.display = 'none');
+        }, 10);
+    }
+</script>
+
+@await RenderSectionAsync(
+    "Scripts",
+    required: false
+)
+
+</body>
+</html>

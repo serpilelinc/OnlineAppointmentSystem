@@ -1,0 +1,123 @@
+@model AppointmentWeb.Models.CreateCategoryViewModel
+
+@{
+    ViewData["Title"] = "Yeni Kategori";
+}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7 col-xl-6">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-4 p-md-5">
+
+                <div class="mb-4">
+
+                    <p class="appointment-eyebrow mb-1">
+                        Kategori Yönetimi
+                    </p>
+
+                    <h2 class="mb-2">
+                        Yeni Kategori Oluştur
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Hizmetlerinizi gruplandırmak için yeni bir
+                        kategori oluşturun.
+                    </p>
+
+                </div>
+
+
+                <form asp-controller="Category"
+                      asp-action="Create"
+                      method="post">
+
+                    <div asp-validation-summary="All"
+                         class="text-danger mb-3">
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Name"
+                               class="form-label fw-semibold">
+                            Kategori Adı
+                        </label>
+
+                        <input asp-for="Name"
+                               class="form-control form-control-lg"
+                               placeholder="Örn: Ev & Teknik" />
+
+                        <span asp-validation-for="Name"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Description"
+                               class="form-label fw-semibold">
+                            Açıklama
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Bu kategoride hangi hizmetlerin yer aldığını açıklayın."></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="category-example-box mb-4">
+
+                        <strong>💡 Örnek</strong>
+
+                        <div class="mt-2">
+                            <span>Ev & Teknik</span>
+                            <small>
+                                Elektrik, tesisat, klima, boya ve
+                                ev bakım hizmetleri.
+                            </small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between gap-3">
+
+                        <a asp-controller="Category"
+                           asp-action="Index"
+                           class="btn btn-clear">
+                            ← Geri Dön
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-filter">
+                            + Kategoriyi Oluştur
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

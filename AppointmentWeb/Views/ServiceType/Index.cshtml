@@ -1,0 +1,168 @@
+@model List<AppointmentWeb.Models.ServiceTypeViewModel>
+
+@{
+    ViewData["Title"] = "Hizmet Yönetimi";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Hizmet Yönetimi</h2>
+        <p class="text-muted mb-0">
+            Sistemde sunulan hizmetleri yönetin.
+        </p>
+    </div>
+    
+
+    <a asp-action="Create"
+   class="btn btn-success">
+    Yeni Hizmet Ekle
+</a>
+<div class="card mb-4">
+    <div class="card-body">
+
+        <form asp-controller="ServiceType"
+              asp-action="Index"
+              method="get"
+              class="row g-3 align-items-end">
+
+            <div class="col-md-5">
+
+                <label class="form-label">
+                    Kategoriye Göre Filtrele
+                </label>
+
+                <select name="categoryId"
+                        class="form-select">
+
+                    <option value="">
+                        Tüm Kategoriler
+                    </option>
+
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        if (ViewBag.SelectedCategoryId != null &&
+                            (int)ViewBag.SelectedCategoryId == category.Id)
+                        {
+                            <option value="@category.Id"
+                                    selected>
+                                @category.Name
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@category.Id">
+                                @category.Name
+                            </option>
+                        }
+                    }
+
+                </select>
+
+            </div>
+
+            <div class="col-md-auto">
+
+                <button type="submit"
+                        class="btn btn-filter">
+                    Filtrele
+                </button>
+
+                <a asp-controller="ServiceType"
+                   asp-action="Index"
+                   class="btn btn-clear">
+                    Temizle
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+
+            <thead>
+    <tr>
+        <th>ID</th>
+        <th>Kategori</th>
+        <th>Hizmet</th>
+        <th>Açıklama</th>
+        <th>Süre</th>
+        <th>Fiyat</th>
+        <th>İşlemler</th>
+    </tr>
+</thead>
+
+            <tbody>
+    @foreach (var service in Model)
+    {
+        <tr>
+            <td>@service.Id</td>
+
+            <td>
+                @if (!string.IsNullOrWhiteSpace(service.CategoryName) &&
+     service.CategoryName != "Kategorisiz")
+{
+    <span class="badge bg-primary">
+        @service.CategoryName
+    </span>
+}
+else
+{
+    <span class="badge bg-secondary">
+        Kategorisiz
+    </span>
+}
+            </td>
+
+            <td>@service.Name</td>
+
+            <td>@service.Description</td>
+
+            <td>
+                @service.DurationMinutes dk
+            </td>
+
+            <td>
+                @service.Price.ToString("N2") ₺
+            </td>
+
+            <td>
+                <a asp-controller="ServiceType"
+                   asp-action="Edit"
+                   asp-route-id="@service.Id"
+                   class="btn btn-primary btn-sm">
+                    Düzenle
+                </a>
+
+                <form asp-controller="ServiceType"
+                      asp-action="Delete"
+                      asp-route-id="@service.Id"
+                      method="post"
+                      class="d-inline"
+                      onsubmit="return confirm('Bu hizmeti silmek istediğinize emin misiniz?');">
+
+                    <button type="submit"
+                            class="btn btn-danger btn-sm">
+                        Sil
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</tbody>
+
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Sistemde kayıtlı hizmet bulunamadı.
+    </div>
+}

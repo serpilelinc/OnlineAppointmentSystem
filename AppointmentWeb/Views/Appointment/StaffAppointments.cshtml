@@ -1,0 +1,185 @@
+@model List<AppointmentWeb.Models.AppointmentViewModel>
+
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="mb-4">
+    <h2>Randevularım</h2>
+    <p class="text-muted">
+        Size atanmış randevuları buradan görüntüleyebilirsiniz.
+    </p>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="alert alert-light border">
+        Size atanmış herhangi bir randevu bulunmuyor.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Müşteri</th>
+                            <th>E-posta</th>
+                            <th>Hizmet</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var appointment in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @appointment.CustomerName
+                                </td>
+
+                                <td>
+                                    @appointment.CustomerEmail
+                                </td>
+
+                                <td>
+                                    @appointment.ServiceTypeName
+                                </td>
+
+                                <td>
+                                    @if (appointment.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Bekliyor
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Confirmed")
+                                    {
+                                        <span class="badge bg-primary">
+                                            Onaylandı
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">
+                                            Tamamlandı
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Cancelled")
+                                    {
+                                        <span class="badge bg-danger">
+                                            İptal Edildi
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            @appointment.Status
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+    @if (appointment.Status == "Pending")
+    {
+        <form asp-action="UpdateStatus"
+              method="post"
+              class="d-inline">
+
+            <input type="hidden"
+                   name="id"
+                   value="@appointment.Id" />
+
+            <input type="hidden"
+                   name="status"
+                   value="Confirmed" />
+
+            <button type="submit"
+                    class="btn btn-primary btn-sm">
+                Onayla
+            </button>
+        </form>
+    }
+
+    @if (appointment.Status == "Confirmed" && appointment.AppointmentDate <= DateTime.Now)
+    {
+        <form asp-action="UpdateStatus"
+              method="post"
+              class="d-inline">
+
+            <input type="hidden"
+                   name="id"
+                   value="@appointment.Id" />
+
+            <input type="hidden"
+                   name="status"
+                   value="Completed" />
+
+            <button type="submit"
+                    class="btn btn-success btn-sm">
+                Tamamla
+            </button>
+        </form>
+    }
+
+    @if (appointment.Status != "Cancelled" &&
+         appointment.Status != "Completed")
+    {
+        <form asp-action="UpdateStatus"
+              method="post"
+              class="d-inline">
+
+            <input type="hidden"
+                   name="id"
+                   value="@appointment.Id" />
+
+            <input type="hidden"
+                   name="status"
+                   value="Cancelled" />
+
+            <button type="submit"
+                    class="btn btn-outline-danger btn-sm">
+                İptal Et
+            </button>
+        </form>
+    }
+</td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+}

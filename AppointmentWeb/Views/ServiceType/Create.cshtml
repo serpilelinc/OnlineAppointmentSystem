@@ -1,0 +1,113 @@
+@model AppointmentWeb.Models.ServiceTypeViewModel
+
+@{
+    ViewData["Title"] = "Yeni Hizmet Ekle";
+}
+
+<div class="mb-4">
+    <h2>Yeni Hizmet Ekle</h2>
+
+    <p class="text-muted">
+        Sisteme yeni bir hizmet tanımlayın.
+    </p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Name"
+                       class="form-label">
+                       <div class="mb-3">
+    <label asp-for="CategoryId"
+           class="form-label">
+        Kategori
+    </label>
+
+    <select asp-for="CategoryId"
+            class="form-select"
+            required>
+
+        <option value="">
+            Kategori seçiniz
+        </option>
+
+        @foreach (var category in ViewBag.Categories)
+        {
+            <option value="@category.Id">
+                @category.Name
+            </option>
+        }
+
+    </select>
+
+    <span asp-validation-for="CategoryId"
+          class="text-danger">
+    </span>
+</div>
+                    Hizmet Adı
+                </label>
+
+                <input asp-for="Name"
+                       class="form-control"
+                       placeholder="Örn: Diş Muayenesi" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description"
+                       class="form-label">
+                    Açıklama
+                </label>
+
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Hizmet açıklamasını giriniz.">
+                </textarea>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DurationMinutes"
+                       class="form-label">
+                    Süre (Dakika)
+                </label>
+
+                <input asp-for="DurationMinutes"
+                       type="number"
+                       min="1"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Price"
+                       class="form-label">
+                    Fiyat (₺)
+                </label>
+
+                <input asp-for="Price"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       class="form-control" />
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success">
+                Hizmeti Kaydet
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                İptal
+            </a>
+
+        </form>
+
+    </div>
+</div>

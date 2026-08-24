@@ -1,0 +1,95 @@
+@model AppointmentWeb.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-lg-10">
+        <div class="card border-0 overflow-hidden" style="border-radius: 30px; box-shadow: 0 15px 40px rgba(167, 139, 250, 0.15);">
+            <div class="row g-0">
+                <!-- Sol Kolon: Görsel -->
+                <div class="col-md-6 d-none d-md-block position-relative">
+                    <img src="~/images/login_illustration.jpg" asp-append-version="true" alt="Login" class="img-fluid h-100 w-100" style="object-fit: cover;" />
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(52,211,153,0.2));"></div>
+                </div>
+
+                <!-- Sağ Kolon: Form -->
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="card-body p-5 w-100">
+
+                        <div class="text-center mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 8px 25px rgba(125,42,232,0.4);">
+                                <i class="bi bi-calendar-check-fill text-white" style="font-size: 2.2rem;"></i>
+                            </div>
+                        </div>
+
+                        <h2 class="text-center mb-4" style="color: var(--primary-dark); font-weight: 800; font-size: 2.2rem;">Hoş Geldiniz! 👋</h2>
+                        <p class="text-center text-muted mb-4">Sizi aramızda görmek harika.</p>
+
+                        <form asp-controller="Auth"
+                              asp-action="Login"
+                              method="post">
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="text-danger mb-3">
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Email"
+                                       class="form-label">
+                                    E-posta Adresiniz
+                                </label>
+
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       placeholder="isim@ornek.com" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Password"
+                                       class="form-label">
+                                    Şifreniz
+                                </label>
+
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control" 
+                                       placeholder="••••••••" />
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100 py-3 mt-2" style="font-size: 1.1rem;">
+                                Giriş Yap <i class="bi bi-arrow-right-short ms-1"></i>
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4 pt-2 border-top border-light">
+                            <a asp-controller="Auth" asp-action="ForgotPassword" class="text-decoration-none fw-bold" style="color: var(--danger);">Şifremi Unuttum 😢</a>
+                            <br /><br />
+                            <span class="text-muted">Henüz hesabınız yok mu?</span>
+                            <a asp-controller="Auth"
+                               asp-action="Register" class="fw-bold" style="color: var(--primary);">
+                                Hemen Kayıt Ol! ✨
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

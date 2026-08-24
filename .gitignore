@@ -1,0 +1,24 @@
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+
+# .NET build files
+bin/
+obj/
+
+# Rider
+.idea/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*

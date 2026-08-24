@@ -1,0 +1,337 @@
+@model AppointmentWeb.Models.StaffViewModel
+
+@{
+    ViewData["Title"] = "Hizmet Veren Yönetimi";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="mb-4">
+    <h2>Hizmet Veren Yönetimi</h2>
+
+    <p class="text-muted">
+        Hizmet verenlerin hizmet ve çalışma bilgilerini yönetin.
+    </p>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-start gap-3">
+
+            <div>
+                <h4 class="mb-3">
+                    @Model.FullName
+                </h4>
+
+                <p class="mb-1">
+                    <strong>E-posta:</strong>
+                    @Model.Email
+                </p>
+
+                <p class="mb-1">
+                    <strong>Unvan:</strong>
+                    @Model.Title
+                </p>
+
+                <p class="mb-0">
+                    <strong>Hizmet Veren ID:</strong>
+                    @Model.Id
+                </p>
+            </div>
+
+            <a asp-controller="Staff"
+               asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="btn btn-primary">
+                ✎ Bilgileri Düzenle
+            </a>
+
+        </div>
+
+    </div>
+</div>
+<div class="row g-3">
+
+    <!-- HİZMET YÖNETİMİ -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h5>Hizmet Yönetimi</h5>
+
+                <p class="text-muted">
+                    Bu hizmet verene verebileceği hizmetleri atayın.
+                </p>
+
+                <h6>Atanmış Hizmetler</h6>
+
+                @if (ViewBag.AssignedServices != null &&
+                     ViewBag.AssignedServices.Count > 0)
+                {
+                    <div class="mb-3">
+
+                        @foreach (var service in ViewBag.AssignedServices)
+{
+    <div class="d-flex align-items-center justify-content-between
+                border rounded p-2 mb-2">
+
+        <div>
+            <span class="badge bg-success">
+                ✓ @service.Name
+            </span>
+
+            @if (!string.IsNullOrWhiteSpace(service.CategoryName) &&
+                 service.CategoryName != "Kategorisiz")
+            {
+                <span class="text-muted ms-2 small">
+                    @service.CategoryName
+                </span>
+            }
+        </div>
+
+        <form asp-controller="Staff"
+              asp-action="RemoveService"
+              method="post"
+              class="m-0">
+
+            <input type="hidden"
+                   name="staffId"
+                   value="@Model.Id" />
+
+            <input type="hidden"
+                   name="serviceTypeId"
+                   value="@service.Id" />
+
+            <button type="submit"
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('Bu hizmet atamasını kaldırmak istediğinize emin misiniz?');">
+                × Kaldır
+            </button>
+
+        </form>
+
+    </div>
+}
+
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border">
+                        Bu hizmet verene henüz hizmet atanmamış.
+                    </div>
+                }
+
+                <form asp-action="AssignService"
+                      method="post">
+
+                    <input type="hidden"
+                           name="StaffId"
+                           value="@Model.Id" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Hizmet
+                        </label>
+
+                        <select name="ServiceTypeId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Hizmet seçiniz
+                            </option>
+
+                            @foreach (var service in ViewBag.ServiceTypes)
+                            {
+                                <option value="@service.Id">
+                                    @service.Name
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Hizmet Ata
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ÇALIŞMA SAATLERİ -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h5>Çalışma Saatleri</h5>
+
+                <p class="text-muted">
+                    Hizmet verenin çalışacağı gün ve saatleri belirleyin.
+                </p>
+
+                <h6>Tanımlı Çalışma Saatleri</h6>
+
+                @if (ViewBag.WorkingHours != null &&
+                     ViewBag.WorkingHours.Count > 0)
+                {
+                    <div class="mb-3">
+
+                        @foreach (var hour in ViewBag.WorkingHours)
+                        {
+                            var dayName = hour.DayOfWeek switch
+                            {
+                                0 => "Pazar",
+                                1 => "Pazartesi",
+                                2 => "Salı",
+                                3 => "Çarşamba",
+                                4 => "Perşembe",
+                                5 => "Cuma",
+                                6 => "Cumartesi",
+                                _ => "Bilinmeyen"
+                            };
+
+                            <div class="border rounded p-2 mb-2
+            d-flex justify-content-between align-items-center">
+
+    <div>
+        <strong>@dayName</strong>
+
+        <span class="ms-2">
+            @hour.StartTime.ToString(@"hh\:mm")
+            -
+            @hour.EndTime.ToString(@"hh\:mm")
+        </span>
+    </div>
+
+    <form asp-action="DeleteWorkingHour"
+          method="post"
+          class="m-0">
+
+        <input type="hidden"
+               name="id"
+               value="@hour.Id" />
+
+        <input type="hidden"
+               name="staffId"
+               value="@Model.Id" />
+
+        <button type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Bu çalışma saatini silmek istediğinize emin misiniz?');">
+            Sil
+        </button>
+
+    </form>
+
+</div>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border">
+                        Henüz çalışma saati tanımlanmamış.
+                    </div>
+                }
+
+                <form asp-action="AddWorkingHour"
+                      method="post">
+
+                    <input type="hidden"
+                           name="StaffId"
+                           value="@Model.Id" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Gün
+                        </label>
+
+                        <select name="DayOfWeek"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Gün seçiniz
+                            </option>
+
+                            <option value="1">Pazartesi</option>
+                            <option value="2">Salı</option>
+                            <option value="3">Çarşamba</option>
+                            <option value="4">Perşembe</option>
+                            <option value="5">Cuma</option>
+                            <option value="6">Cumartesi</option>
+                            <option value="0">Pazar</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Başlangıç Saati
+                        </label>
+
+                        <input type="time"
+                               name="StartTime"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Bitiş Saati
+                        </label>
+
+                        <input type="time"
+                               name="EndTime"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-success">
+                        Çalışma Saati Ekle
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="mt-4">
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Hizmet Veren Listesine Dön
+    </a>
+
+</div>

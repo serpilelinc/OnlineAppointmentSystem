@@ -1,0 +1,146 @@
+@model List<AppointmentWeb.Models.StaffViewModel>
+
+@{
+    ViewData["Title"] = "Hizmet Veren Yönetimi";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2>Hizmet Veren Yönetimi</h2>
+
+        <p class="text-muted mb-0">
+            Sistemde kayıtlı hizmet verenleri yönetin ve kullanıcı hesabı oluşturun.
+        </p>
+    </div>
+
+    <a asp-controller="Staff"
+       asp-action="Create"
+       class="btn btn-success">
+        Yeni Hizmet Veren Ekle
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered mt-4 align-middle">
+
+            <thead>
+                <tr>
+                    <th>Ad Soyad</th>
+<th>E-posta</th>
+<th>Uzmanlık / Unvan</th>
+<th>Yönetim</th>
+<th>Hesap</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var staff in Model)
+                {
+                    <tr>
+
+                        <td>
+                            @staff.Id
+                        </td>
+
+                        <td>
+                            @staff.FullName
+                        </td>
+
+                        <td>
+                            @staff.Email
+                        </td>
+
+                        <td>
+                            @staff.Title
+                        </td>
+
+                        <td>
+                            <a asp-controller="Staff"
+                               asp-action="Manage"
+                               asp-route-id="@staff.Id"
+                               class="btn btn-primary btn-sm">
+                                Yönet
+                            </a>
+                            <form asp-controller="Staff"
+      asp-action="Delete"
+      asp-route-id="@staff.Id"
+      method="post"
+      class="d-inline"
+      onsubmit="return confirm('@staff.FullName adlı hizmet vereni silmek istediğinize emin misiniz?');">
+
+    <button type="submit"
+            class="btn btn-danger btn-sm">
+        Sil
+    </button>
+
+</form>
+                        </td>
+
+
+                        <td>
+    @if (staff.HasUserAccount)
+    {
+        <span class="badge bg-success">
+            Hesap Aktif
+        </span>
+    }
+    else
+    {
+        <form asp-controller="Staff"
+              asp-action="CreateUserAccount"
+              method="post"
+              class="d-flex gap-2">
+
+            <input type="hidden"
+                   name="StaffId"
+                   value="@staff.Id" />
+
+            <input type="password"
+                   name="Password"
+                   class="form-control form-control-sm"
+                   style="max-width: 160px;"
+                   placeholder="Şifre belirle"
+                   minlength="6"
+                   required />
+
+            <button type="submit"
+                    class="btn btn-dark btn-sm">
+                Hesap Oluştur
+            </button>
+
+        </form>
+    }
+</td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4">
+        Sistemde kayıtlı Hizmet Veren bulunamadı.
+    </div>
+}

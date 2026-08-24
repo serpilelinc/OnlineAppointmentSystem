@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Çalışma Saatlerim";
+    var workingHours = ViewBag.WorkingHours as List<AppointmentWeb.Models.CreateStaffWorkingHourViewModel> ?? new List<AppointmentWeb.Models.CreateStaffWorkingHourViewModel>();
+    
+    var days = new[]
+    {
+        new { Name = "Pazartesi", Value = DayOfWeek.Monday },
+        new { Name = "Salı", Value = DayOfWeek.Tuesday },
+        new { Name = "Çarşamba", Value = DayOfWeek.Wednesday },
+        new { Name = "Perşembe", Value = DayOfWeek.Thursday },
+        new { Name = "Cuma", Value = DayOfWeek.Friday },
+        new { Name = "Cumartesi", Value = DayOfWeek.Saturday },
+        new { Name = "Pazar", Value = DayOfWeek.Sunday }
+    };
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">📅 Çalışma Saatlerim</h2>
+        <p class="text-muted">Haftalık çalışma saatlerinizi buradan belirleyebilirsiniz. Çalışmadığınız günler için saatleri boş bırakabilirsiniz.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form asp-action="MyWorkingHours" method="post">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 20%;">Gün</th>
+                            <th style="width: 40%;">Başlangıç Saati</th>
+                            <th style="width: 40%;">Bitiş Saati</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < days.Length; i++)
+                        {
+                            var day = days[i];
+                            var existing = workingHours.FirstOrDefault(w => w.DayOfWeek == (int)day.Value);
+                            
+                            <tr>
+                                <td class="fw-bold">
+                                    @day.Name
+                                    <input type="hidden" name="dtos[@i].DayOfWeek" value="@((int)day.Value)" />
+                                </td>
+                                <td>
+                                    <input type="time" name="dtos[@i].StartTime" class="form-control" value="@(existing != null ? existing.StartTime.ToString(@"hh\:mm") : "")" />
+                                </td>
+                                <td>
+                                    <input type="time" name="dtos[@i].EndTime" class="form-control" value="@(existing != null ? existing.EndTime.ToString(@"hh\:mm") : "")" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow-sm px-5">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>

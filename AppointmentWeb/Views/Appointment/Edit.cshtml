@@ -1,0 +1,102 @@
+@model AppointmentWeb.Models.CreateAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Randevu Düzenle";
+    var appointmentId = ViewBag.AppointmentId;
+}
+
+<h2>Randevu Düzenle</h2>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" name="id" value="@appointmentId" />
+
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerName" class="form-label">
+            Müşteri Adı
+        </label>
+
+        <input asp-for="CustomerName" class="form-control" />
+
+        <span asp-validation-for="CustomerName"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerEmail" class="form-label">
+            E-posta
+        </label>
+
+        <input asp-for="CustomerEmail"
+               class="form-control"
+               type="email" />
+
+        <span asp-validation-for="CustomerEmail"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AppointmentDate" class="form-label">
+            Randevu Tarihi ve Saati
+        </label>
+
+        <input asp-for="AppointmentDate"
+               class="form-control"
+               type="datetime-local" />
+
+        <span asp-validation-for="AppointmentDate"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ServiceTypeId" class="form-label">
+            Hizmet
+        </label>
+
+        <select asp-for="ServiceTypeId" class="form-select">
+
+            @foreach (var service in ViewBag.ServiceTypes)
+            {
+                <option value="@service.Id">
+                    @service.Name
+                </option>
+            }
+
+        </select>
+
+        <span asp-validation-for="ServiceTypeId"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StaffId" class="form-label">
+            Personel
+        </label>
+
+        <select asp-for="StaffId" class="form-select">
+
+            @foreach (var staff in ViewBag.Staff)
+            {
+                <option value="@staff.Id">
+                    @staff.FullName
+                </option>
+            }
+
+        </select>
+
+        <span asp-validation-for="StaffId"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Değişiklikleri Kaydet
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Geri Dön
+    </a>
+
+</form>

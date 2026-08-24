@@ -1,0 +1,486 @@
+@model AppointmentWeb.Models.DashboardViewModel
+
+@{
+    var userRole = Context.Session.GetString("UserRole");
+    var userName = Context.Session.GetString("UserName");
+
+    ViewData["Title"] =
+        string.IsNullOrWhiteSpace(userRole)
+            ? "Ana Sayfa"
+            : "Dashboard";
+}
+
+@if (string.IsNullOrWhiteSpace(userRole))
+{
+    <!-- GİRİŞ YAPILMAMIŞ KULLANICI -->
+
+    <div class="hero-bg py-5 my-4 rounded-5 animate-fade-in-up" style="background: rgba(255,255,255,0.7); box-shadow: 0 15px 40px rgba(167, 139, 250, 0.1);">
+        <div class="row align-items-center px-4 px-lg-5">
+            <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-4" style="color: var(--primary-dark); line-height: 1.2;">
+                    Zamanınızı Yönetmenin <br /> <span style="color: var(--secondary);">En Keyifli Yolu ✨</span>
+                </h1>
+
+                <p class="lead text-muted mt-3 mb-5 mx-auto mx-lg-0" style="max-width: 500px; font-size: 1.25rem;">
+                    İhtiyacınıza uygun hizmeti anında bulun. Cıvıl cıvıl arayüzümüzle saniyeler içinde randevu oluşturun!
+                </p>
+
+                <div class="mt-4 d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3">
+                    <a asp-controller="Auth"
+                       asp-action="Login"
+                       class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
+                        Hemen Başla <i class="bi bi-rocket ms-2"></i>
+                    </a>
+
+                    <a asp-controller="Auth"
+                       asp-action="Register"
+                       class="btn btn-outline-primary btn-lg px-5 py-3 bg-white">
+                        Ücretsiz Kayıt Ol
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 text-center position-relative">
+                <img src="~/images/hero_illustration.jpg" asp-append-version="true" alt="Online Randevu" class="img-fluid hero-image-hover" style="max-height: 450px; object-fit: cover;" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-3 animate-fade-in-up" style="animation-delay: 0.2s;">
+
+        <div class="col-md-4">
+            <div class="card glass-card h-100 p-2">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 25px; background: rgba(167,139,250,0.15); color: var(--primary);">
+                        <i class="bi bi-magic fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: var(--primary-dark);">Hizmet Seçin</h4>
+                    <p class="text-muted mb-0" style="font-size: 1.1rem;">
+                        İhtiyacınız olan hizmeti seçerek eğlenceli randevu sürecini başlatın.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card glass-card h-100 p-2">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 25px; background: rgba(52,211,153,0.15); color: var(--secondary);">
+                        <i class="bi bi-calendar-heart fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: var(--secondary-dark);">Uygun Saat Bulun</h4>
+                    <p class="text-muted mb-0" style="font-size: 1.1rem;">
+                        Sistem sadece uzmanlarımızın müsait olduğu saatleri size sunar.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card glass-card h-100 p-2">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 25px; background: rgba(251,113,133,0.15); color: var(--danger);">
+                        <i class="bi bi-stars fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: var(--danger);">Randevunuzu Yönetin</h4>
+                    <p class="text-muted mb-0" style="font-size: 1.1rem;">
+                        Randevularınızı takip edin, detayları görüntüleyin ve anında güncelleyin.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+else if (userRole == "Admin")
+{
+    <div class="dashboard-header mb-4">
+        <div>
+            <p class="dashboard-eyebrow mb-1">Yönetim Paneli</p>
+
+            <h2 class="mb-2">
+                Hoş geldiniz, @userName 👋
+            </h2>
+
+            <p class="text-muted mb-0">
+                Randevu sisteminin genel durumunu buradan takip edebilirsiniz.
+            </p>
+        </div>
+
+        <div class="dashboard-date-box">
+            <span class="small text-muted">
+                Bugün
+            </span>
+
+            <strong>
+                @DateTime.Now.ToString("dd.MM.yyyy")
+            </strong>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+    <!-- BUGÜN -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           asp-route-startDate="@DateTime.Today.ToString("yyyy-MM-dd")"
+           asp-route-endDate="@DateTime.Today.ToString("yyyy-MM-dd")"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-today">
+                <div class="stat-icon">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+
+                <div>
+                    <span>Bugün</span>
+                    <h2>@Model.TodayAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+
+    <!-- BEKLEYEN -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           asp-route-status="Pending"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-pending">
+                <div class="stat-icon">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+
+                <div>
+                    <span>Bekleyen</span>
+                    <h2>@Model.PendingAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+
+    <!-- ONAYLANAN -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           asp-route-status="Confirmed"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-confirmed">
+                <div class="stat-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div>
+                    <span>Onaylanan</span>
+                    <h2>@Model.ConfirmedAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+
+    <!-- TAMAMLANAN -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           asp-route-status="Completed"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-completed">
+                <div class="stat-icon">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+
+                <div>
+                    <span>Tamamlanan</span>
+                    <h2>@Model.CompletedAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+
+    <!-- İPTAL EDİLEN -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           asp-route-status="Cancelled"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-cancelled">
+                <div class="stat-icon">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+
+                <div>
+                    <span>İptal</span>
+                    <h2>@Model.CancelledAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+
+    <!-- TÜM RANDEVULAR -->
+    <div class="col-md-4 col-xl-2">
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           class="text-decoration-none">
+
+            <div class="dashboard-stat-card stat-total">
+                <div class="stat-icon">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </div>
+
+                <div>
+                    <span>Toplam</span>
+                    <h2>@Model.TotalAppointments</h2>
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+</div>
+
+    <div class="dashboard-actions mb-5">
+
+        <a asp-controller="Appointment"
+           asp-action="Index"
+           class="dashboard-action-button">
+            <span><i class="bi bi-clipboard2-data"></i></span>
+
+            <div>
+                <strong>Randevular</strong>
+                <small>Tüm randevuları yönet</small>
+            </div>
+        </a>
+
+        <a asp-controller="Staff"
+           asp-action="Index"
+           class="dashboard-action-button">
+            <span><i class="bi bi-people"></i></span>
+
+            <div>
+                <strong>Hizmet Verenler</strong>
+                <small>Hizmet veren ve çalışma saatleri</small>
+            </div>
+        </a>
+
+        <a asp-controller="ServiceType"
+           asp-action="Index"
+           class="dashboard-action-button">
+            <span><i class="bi bi-tools"></i></span>
+
+            <div>
+                <strong>Hizmetler</strong>
+                <small>Hizmet ve fiyat yönetimi</small>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- GRAFİK ALANI -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mx-auto">
+            <div class="card glass-card border-0 shadow-sm" style="border-radius: 20px;">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-4 text-dark" style="letter-spacing: -0.5px;">Randevu Durum Analizi</h5>
+                    <div style="position: relative; height:300px; width:100%">
+                        <canvas id="appointmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card dashboard-table-card">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <h4 class="mb-1">
+                        Bugünün Randevuları
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Bugün planlanan aktif randevular.
+                    </p>
+                </div>
+
+                <a asp-controller="Appointment"
+                   asp-action="Index"
+                   class="btn btn-outline-primary btn-sm">
+                    Tümünü Gör
+                </a>
+
+            </div>
+
+            @if (Model.TodayAppointmentList != null &&
+                 Model.TodayAppointmentList.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Saat</th>
+                                <th>Müşteri</th>
+                                <th>E-posta</th>
+                                <th>Hizmet</th>
+                                <th>Hizmet Veren</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var appointment in Model.TodayAppointmentList)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            @appointment.AppointmentDate.ToString("HH:mm")
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @appointment.CustomerName
+                                    </td>
+
+                                    <td>
+                                        @appointment.CustomerEmail
+                                    </td>
+
+                                    <td>
+                                        @appointment.ServiceTypeName
+                                    </td>
+
+                                    <td>
+                                        @appointment.StaffName
+                                    </td>
+
+                                    <td>
+
+                                        @if (appointment.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Bekliyor
+                                            </span>
+                                        }
+                                        else if (appointment.Status == "Confirmed")
+                                        {
+                                            <span class="badge bg-primary">
+                                                Onaylandı
+                                            </span>
+                                        }
+                                        else if (appointment.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">
+                                                Tamamlandı
+                                            </span>
+                                        }
+                                        else if (appointment.Status == "Cancelled")
+                                        {
+                                            <span class="badge bg-danger">
+                                                İptal Edildi
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @appointment.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="dashboard-empty-state text-center py-5">
+                    <img src="~/images/empty_state.jpg" asp-append-version="true" alt="Randevu Yok" class="img-fluid mb-4 rounded-4 shadow-sm" style="max-width: 300px; object-fit: cover;" />
+
+                    <h5 class="fw-bold text-dark">
+                        Bugün randevu bulunmuyor
+                    </h5>
+
+                    <p class="text-muted">
+                        Bugün için planlanmış aktif randevu bulunmamaktadır.
+                    </p>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var ctx = document.getElementById('appointmentChart');
+                if(ctx) {
+                    var chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Bekleyen', 'Onaylanan', 'Tamamlanan', 'İptal Edilen'],
+                            datasets: [{
+                                data: [
+                                    @Model.PendingAppointments, 
+                                    @Model.ConfirmedAppointments, 
+                                    @Model.CompletedAppointments, 
+                                    @Model.CancelledAppointments
+                                ],
+                                backgroundColor: [
+                                    '#f59e0b', // warning/amber
+                                    '#3b82f6', // primary/blue
+                                    '#10b981', // success/emerald
+                                    '#ef4444'  // danger/red
+                                ],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        font: {
+                                            family: "'Outfit', sans-serif",
+                                            size: 13
+                                        }
+                                    }
+                                }
+                            },
+                            cutout: '65%'
+                        }
+                    });
+                }
+            });
+        </script>
+    }
+}

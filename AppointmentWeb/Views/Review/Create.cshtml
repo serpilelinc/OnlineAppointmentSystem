@@ -1,0 +1,119 @@
+@model AppointmentWeb.Models.CreateReviewViewModel
+
+@{
+    ViewData["Title"] = "Hizmeti Değerlendir";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">🌟 Hizmeti Değerlendir</h2>
+                <p class="text-muted text-center mb-4">
+                    Aldığınız hizmetten memnun kaldınız mı? Lütfen personelimizi değerlendirin. Puanınız kaliteyi artırmamıza yardımcı olacaktır.
+                </p>
+
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="AppointmentId" />
+
+                    <div class="mb-4 text-center">
+                        <label class="form-label d-block fw-bold">Puanınız (1-5)</label>
+                        
+                        <div class="rating-box d-flex justify-content-center gap-3 mt-2">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input d-none star-input" type="radio" asp-for="Rating" value="@i" id="star_@i">
+                                    <label class="form-check-label fs-1 cursor-pointer star-label text-muted" for="star_@i" data-value="@i">
+                                        ★
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <span asp-validation-for="Rating" class="text-danger d-block mt-2"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Comment" class="form-label fw-bold">Yorumunuz (İsteğe Bağlı)</label>
+                        <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Hizmet hakkındaki düşüncelerinizi buraya yazabilirsiniz..."></textarea>
+                        <span asp-validation-for="Comment" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg fw-bold text-dark shadow-sm">
+                            Gönder
+                        </button>
+                        <a asp-controller="Appointment" asp-action="MyAppointments" class="btn btn-light btn-lg border shadow-sm">
+                            İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        
+        .star-label:hover,
+        .star-label.hovered,
+        .star-label.selected {
+            color: #ffc107 !important; /* Warning/Yellow color */
+            transform: scale(1.1);
+            transition: all 0.2s;
+        }
+        
+        .star-label {
+            transition: all 0.2s;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const stars = document.querySelectorAll('.star-label');
+            
+            stars.forEach(star => {
+                // Hover effect
+                star.addEventListener('mouseover', function() {
+                    const val = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= val) {
+                            s.classList.add('hovered');
+                        } else {
+                            s.classList.remove('hovered');
+                        }
+                    });
+                });
+                
+                // Mouse leave effect
+                star.addEventListener('mouseout', function() {
+                    stars.forEach(s => s.classList.remove('hovered'));
+                });
+                
+                // Click (select) effect
+                star.addEventListener('click', function() {
+                    const val = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= val) {
+                            s.classList.add('selected');
+                        } else {
+                            s.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

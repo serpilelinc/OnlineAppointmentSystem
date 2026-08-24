@@ -1,0 +1,155 @@
+@model List<AppointmentWeb.Models.AppointmentViewModel>
+
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Randevularım</h2>
+        <p class="text-muted mb-0">
+            Oluşturduğunuz randevuları buradan görüntüleyebilirsiniz.
+        </p>
+    </div>
+
+    <a asp-controller="Appointment"
+       asp-action="Create"
+       class="btn btn-primary">
+        Yeni Randevu Al
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="alert alert-light border">
+        Henüz bir randevunuz bulunmuyor.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Hizmet</th>
+                            <th>Personel</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var appointment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @appointment.AppointmentDate.ToString(
+                                        "dd.MM.yyyy HH:mm"
+                                    )
+                                </td>
+
+                                <td>
+                                    @appointment.ServiceTypeName
+                                </td>
+
+                                <td>
+                                    @appointment.StaffName
+                                </td>
+
+                                <td>
+                                    @if (appointment.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Bekliyor
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Confirmed")
+                                    {
+                                        <span class="badge bg-primary">
+                                            Onaylandı
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">
+                                            Tamamlandı
+                                        </span>
+                                    }
+                                    else if (appointment.Status == "Cancelled")
+                                    {
+                                        <span class="badge bg-danger">
+                                            İptal Edildi
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            @appointment.Status
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+    @if (appointment.Status != "Cancelled" &&
+         appointment.Status != "Completed")
+    {
+        <form asp-controller="Appointment"
+              asp-action="CancelMyAppointment"
+              method="post"
+              class="d-inline">
+
+            <input type="hidden"
+                   name="id"
+                   value="@appointment.Id" />
+
+            <button type="submit"
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?');">
+                İptal Et
+            </button>
+
+        </form>
+    }
+    else if (appointment.Status == "Completed" && !appointment.IsReviewed)
+    {
+        <a asp-controller="Review" 
+           asp-action="Create" 
+           asp-route-appointmentId="@appointment.Id" 
+           class="btn btn-warning btn-sm text-dark fw-bold shadow-sm">
+           🌟 Değerlendir
+        </a>
+    }
+    else
+    {
+        <span class="text-muted">-</span>
+    }
+</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+}

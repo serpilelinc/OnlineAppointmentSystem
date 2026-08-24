@@ -1,0 +1,96 @@
+@model AppointmentWeb.Models.CreateStaffViewModel
+
+@{
+    ViewData["Title"] = "Yeni Personel Ekle";
+}
+
+<h2>Yeni Hizmet Veren Ekle</h2>
+
+<p class="text-muted">
+    Sisteme yeni bir hizmet veren kaydı oluşturabilirsiniz.
+</p>
+<h6>Atanmış Hizmetler</h6>
+
+@if (ViewBag.AssignedServices != null &&
+     ViewBag.AssignedServices.Count > 0)
+{
+    <div class="mb-3">
+        @foreach (var service in ViewBag.AssignedServices)
+        {
+            <span class="badge bg-success me-1 mb-1">
+                ✓ @service.Name
+            </span>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-light border">
+        Bu hizmet verene henüz hizmet atanmamış.
+    </div>
+}
+
+<form asp-action="Create" method="post" class="mt-4">
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger mb-3">
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FullName"
+               class="form-label">
+            Ad Soyad
+        </label>
+
+        <input asp-for="FullName"
+               class="form-control" />
+
+        <span asp-validation-for="FullName"
+              class="text-danger">
+        </span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email"
+               class="form-label">
+            E-posta
+        </label>
+
+        <input asp-for="Email"
+               class="form-control"
+               type="email" />
+
+        <span asp-validation-for="Email"
+              class="text-danger">
+        </span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Title"
+               class="form-label">
+            Unvan
+        </label>
+
+        <input asp-for="Title"
+               class="form-control" />
+
+        <span asp-validation-for="Title"
+              class="text-danger">
+        </span>
+    </div>
+
+    <button type="submit"
+            class="btn btn-success">
+        Hizmet Veren Ekle
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Geri Dön
+    </a>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

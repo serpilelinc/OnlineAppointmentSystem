@@ -1,0 +1,1179 @@
+@model AppointmentWeb.Models.CreateAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Yeni Randevu";
+}
+
+<div class="appointment-create-wrapper">
+
+    <div class="appointment-create-header mb-4">
+        <div>
+            <p class="appointment-eyebrow mb-1">
+                Yeni Randevu
+            </p>
+
+            <h2 class="mb-2">
+                Randevunuzu Oluşturun
+            </h2>
+
+            <p class="text-muted mb-0">
+                Hizmet, hizmet veren, tarih ve uygun saati seçerek
+                randevunuzu birkaç adımda tamamlayabilirsiniz.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ADIM GÖSTERGESİ -->
+<div class="appointment-steps mb-4">
+
+    <div class="appointment-step active"
+         id="stepCategory">
+        <div class="step-number">1</div>
+
+        <div class="step-content">
+            <strong>Kategori</strong>
+            <small>Kategori seçin</small>
+        </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="appointment-step"
+         id="stepService">
+        <div class="step-number">2</div>
+
+        <div class="step-content">
+            <strong>Hizmet</strong>
+            <small>Hizmet seçin</small>
+        </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="appointment-step"
+         id="stepDate">
+        <div class="step-number">3</div>
+
+        <div class="step-content">
+            <strong>Tarih</strong>
+            <small>Gün belirleyin</small>
+        </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="appointment-step"
+         id="stepStaff">
+        <div class="step-number">4</div>
+
+        <div class="step-content">
+            <strong>Hizmet Veren</strong>
+            <small>Uygun kişiyi seçin</small>
+        </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="appointment-step"
+         id="stepTime">
+        <div class="step-number">5</div>
+
+        <div class="step-content">
+            <strong>Saat</strong>
+            <small>Uygun saat</small>
+        </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="appointment-step"
+         id="stepConfirm">
+        <div class="step-number">6</div>
+
+        <div class="step-content">
+            <strong>Onay</strong>
+            <small>Randevuyu oluştur</small>
+        </div>
+    </div>
+
+</div>
+
+
+    <div class="row g-4">
+
+        <!-- FORM -->
+        <div class="col-lg-8">
+
+            <div class="card appointment-form-card">
+
+                <div class="card-body p-4">
+
+                    <form asp-action="Create"
+                          method="post"
+                          id="appointmentForm">
+
+                        <div asp-validation-summary="All"
+                             class="text-danger mb-3">
+                        </div>
+
+
+                        <!-- MÜŞTERİ BİLGİLERİ -->
+                        <div class="appointment-section">
+
+                            <div class="appointment-section-title">
+                                <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+                                    <i class="bi bi-person"></i>
+                                </span>
+
+                                <div>
+                                    <h5 class="mb-1" style="color: var(--primary-dark);">
+                                        İletişim Bilgileri
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Randevu sahibinin bilgileri
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="CustomerName"
+                                           class="form-label">
+                                        Ad Soyad
+                                    </label>
+
+                                    <input asp-for="CustomerName"
+                                           class="form-control"
+                                           placeholder="Adınızı ve soyadınızı girin" />
+
+                                    <span asp-validation-for="CustomerName"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="CustomerEmail"
+                                           class="form-label">
+                                        E-posta
+                                    </label>
+
+                                    <input asp-for="CustomerEmail"
+                                           class="form-control"
+                                           type="email"
+                                           placeholder="ornek@mail.com" />
+
+                                    <span asp-validation-for="CustomerEmail"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <!-- KATEGORİ -->
+<div class="appointment-section">
+
+    <div class="appointment-section-title">
+
+        <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+            <i class="bi bi-folder2-open"></i>
+        </span>
+
+        <div>
+            <h5 class="mb-1" style="color: var(--primary-dark);">
+                1. Kategori Seçin
+            </h5>
+
+            <small class="text-muted">
+                İhtiyacınıza uygun hizmet kategorisini seçin
+            </small>
+        </div>
+
+    </div>
+
+    <label class="form-label">
+        Kategori
+    </label>
+
+    <select id="CategoryId"
+            class="form-select">
+
+        <option value="">
+            Kategori seçiniz
+        </option>
+
+        @foreach (var category in ViewBag.Categories)
+        {
+            <option value="@category.Id">
+                @category.Name
+            </option>
+        }
+
+    </select>
+
+</div>
+
+
+                        <!-- 1 HİZMET -->
+                        <div class="appointment-section">
+
+                            <div class="appointment-section-title">
+                                <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+                                    <i class="bi bi-wrench-adjustable"></i>
+                                </span>
+
+                                <div>
+                                    <h5 class="mb-1" style="color: var(--primary-dark);">
+                                        2. Hizmet Seçin
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Randevu almak istediğiniz hizmet
+                                    </small>
+                                </div>
+                            </div>
+
+                            <label asp-for="ServiceTypeId"
+                                   class="form-label">
+                                Hizmet
+                            </label>
+
+                            <select asp-for="ServiceTypeId"
+        class="form-select"
+        disabled>
+
+    <option value="">
+        Önce kategori seçiniz
+    </option>
+
+</select>
+
+                            <span asp-validation-for="ServiceTypeId"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- 2 TARİH -->
+<div class="appointment-section">
+
+    <div class="appointment-section-title">
+
+        <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+            <i class="bi bi-calendar3"></i>
+        </span>
+
+        <div>
+            <h5 class="mb-1" style="color: var(--primary-dark);">
+                3. Tarih Seçin
+            </h5>
+
+            <small class="text-muted">
+                Hizmet almak istediğiniz günü belirleyin
+            </small>
+        </div>
+
+    </div>
+
+    <label class="form-label">
+        Randevu Tarihi
+    </label>
+
+    <input type="date"
+           id="appointmentDate"
+           class="form-control"
+           min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+
+</div>
+
+
+<!-- 3 HİZMET VEREN -->
+<div class="appointment-section">
+
+    <div class="appointment-section-title">
+
+        <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+            <i class="bi bi-person-badge"></i>
+        </span>
+
+        <div>
+            <h5 class="mb-1" style="color: var(--primary-dark);">
+                4. Hizmet Veren Seçin
+            </h5>
+
+            <small class="text-muted">
+                Seçtiğiniz tarihte çalışan hizmet verenler
+            </small>
+        </div>
+
+    </div>
+
+    <label asp-for="StaffId"
+           class="form-label">
+        Hizmet Veren
+    </label>
+
+    <select asp-for="StaffId"
+            id="StaffId"
+            class="form-select"
+            disabled>
+
+        <option value="">
+            Önce hizmet ve tarih seçiniz
+        </option>
+
+    </select>
+
+    <span asp-validation-for="StaffId"
+          class="text-danger">
+    </span>
+
+</div>
+
+                        <!-- 4 SAAT -->
+                        <div class="appointment-section">
+
+                            <div class="appointment-section-title">
+                                <span class="section-icon shadow-sm" style="background: linear-gradient(135deg, rgba(125,42,232,0.1), rgba(0,196,204,0.1)); color: var(--primary-dark);">
+                                    <i class="bi bi-clock"></i>
+                                </span>
+
+                                <div>
+                                    <h5 class="mb-1" style="color: var(--primary-dark);">
+                                        5. Uygun Saat
+                                    </h5>
+
+                                    <small class="text-muted">
+    Hizmet verenin müsait olduğu saatler
+</small>
+                                </div>
+                            </div>
+
+                            <label class="form-label">
+                                Saat
+                            </label>
+
+                            <select id="availableSlot"
+                                    class="form-select"
+                                    disabled>
+
+                                <option value="">
+                                    Önce hizmet, hizmet veren ve tarih seçiniz
+                                </option>
+
+                            </select>
+
+                            <input asp-for="AppointmentDate"
+                                   type="hidden"
+                                   id="finalAppointmentDate" />
+
+                        </div>
+
+
+                        <!-- BUTONLAR -->
+                        <div class="appointment-submit-area">
+
+                            <a asp-controller="Appointment"
+                               asp-action="MyAppointments"
+                               class="btn btn-clear">
+                                ← Randevularıma Dön
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-filter btn-lg"
+                                    id="submitAppointment"
+                                    disabled>
+                                ✓ Randevuyu Oluştur
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- SAĞ ÖZET -->
+        <div class="col-lg-4">
+
+            <div class="mb-4 d-none d-lg-block text-center position-relative">
+                <img src="~/images/create_illustration.jpg" asp-append-version="true" alt="Randevu Oluştur" class="img-fluid rounded-4 shadow-sm" style="width: 100%; object-fit: cover; border: 2px solid white;" />
+                <div class="position-absolute top-0 start-0 w-100 h-100 rounded-4" style="background: linear-gradient(135deg, rgba(167,139,250,0.1), rgba(52,211,153,0.1)); pointer-events: none;"></div>
+            </div>
+
+            <div class="card appointment-summary-card">
+
+                <div class="card-body p-4">
+
+                    <p class="appointment-eyebrow mb-1">
+                        Randevu Özeti
+                    </p>
+
+                    <h4 class="mb-4">
+    Seçimleriniz
+</h4>
+
+<!-- KATEGORİ ÖZETİ -->
+<div class="summary-item">
+
+    <span class="summary-icon">
+        <i class="bi bi-folder2-open"></i>
+    </span>
+
+    <div>
+        <small>Kategori</small>
+
+        <strong id="summaryCategory">
+            Henüz seçilmedi
+        </strong>
+    </div>
+
+</div>
+
+
+<!-- HİZMET ÖZETİ -->
+<div class="summary-item">
+
+    <span class="summary-icon">
+        <i class="bi bi-wrench-adjustable"></i>
+    </span>
+
+    <div>
+        <small>Hizmet</small>
+
+        <strong id="summaryService">
+            Henüz seçilmedi
+        </strong>
+    </div>
+    <div class="summary-item">
+
+    <span class="summary-icon text-success" style="background: rgba(16,185,129,0.1);">
+        <i class="bi bi-tags"></i>
+    </span>
+
+    <div>
+        <small>Fiyat</small>
+
+        <strong id="summaryPrice">
+            Henüz seçilmedi
+        </strong>
+    </div>
+
+
+</div>
+
+</div>
+
+                    <div class="summary-item">
+
+                        <span class="summary-icon text-primary" style="background: rgba(125,42,232,0.1);">
+                            <i class="bi bi-person-badge"></i>
+                        </span>
+
+                        <div>
+                            <small>Hizmet Veren</small>
+
+                            <strong id="summaryStaff">
+                                Henüz seçilmedi
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span class="summary-icon text-danger" style="background: rgba(255,0,127,0.1);">
+                            <i class="bi bi-calendar3"></i>
+                        </span>
+
+                        <div>
+                            <small>Tarih</small>
+
+                            <strong id="summaryDate">
+                                Henüz seçilmedi
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span class="summary-icon text-secondary" style="background: rgba(0,196,204,0.1);">
+                            <i class="bi bi-clock"></i>
+                        </span>
+
+                        <div>
+                            <small>Saat</small>
+
+                            <strong id="summaryTime">
+                                Henüz seçilmedi
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="appointment-summary-info">
+                        ℹ️ Seçtiğiniz saat yalnızca o anda uygun olan
+                        zaman aralıklarından gösterilmektedir.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const categorySelect =
+    document.getElementById("CategoryId");
+
+        const serviceSelect =
+            document.getElementById("ServiceTypeId");
+
+        const staffSelect =
+            document.getElementById("StaffId");
+
+        const dateInput =
+            document.getElementById("appointmentDate");
+
+        const slotSelect =
+            document.getElementById("availableSlot");
+
+        const finalDateInput =
+            document.getElementById("finalAppointmentDate");
+
+        const submitButton =
+            document.getElementById("submitAppointment");
+
+
+        const summaryCategory =
+    document.getElementById("summaryCategory");
+
+const summaryService =
+    document.getElementById("summaryService");
+const summaryPrice =
+    document.getElementById("summaryPrice");
+
+const summaryStaff =
+    document.getElementById("summaryStaff");
+
+const summaryDate =
+    document.getElementById("summaryDate");
+
+const summaryTime =
+    document.getElementById("summaryTime");
+        const stepCategory =
+    document.getElementById("stepCategory");
+
+
+        const stepService =
+            document.getElementById("stepService");
+
+        const stepDate =
+            document.getElementById("stepDate");
+
+        const stepStaff =
+            document.getElementById("stepStaff");
+
+        const stepTime =
+            document.getElementById("stepTime");
+
+        const stepConfirm =
+            document.getElementById("stepConfirm");
+
+
+        function setStepCompleted(step) {
+            step.classList.add("completed");
+            step.classList.add("active");
+        }
+
+
+        function resetStep(step) {
+            step.classList.remove("completed");
+            step.classList.remove("active");
+        }
+
+
+        function resetStaff() {
+
+            staffSelect.innerHTML =
+                '<option value="">Önce hizmet ve tarih seçiniz</option>';
+
+            staffSelect.disabled = true;
+
+            summaryStaff.textContent =
+                "Henüz seçilmedi";
+
+            resetStep(stepStaff);
+        }
+
+
+        function resetSlots() {
+
+            slotSelect.innerHTML =
+                '<option value="">Önce hizmet veren seçiniz</option>';
+
+            slotSelect.disabled = true;
+
+            finalDateInput.value = "";
+
+            summaryTime.textContent =
+                "Henüz seçilmedi";
+
+            resetStep(stepTime);
+            resetStep(stepConfirm);
+        }
+
+
+        function updateSubmitState() {
+
+            const isReady =
+                serviceSelect.value &&
+                dateInput.value &&
+                staffSelect.value &&
+                slotSelect.value;
+
+            submitButton.disabled = !isReady;
+
+            if (isReady) {
+                stepConfirm.classList.add("active");
+            }
+            else {
+                resetStep(stepConfirm);
+            }
+        }
+        async function loadServicesByCategory() {
+
+    const categoryId = categorySelect.value;
+
+    serviceSelect.innerHTML =
+        '<option value="">Hizmet yükleniyor...</option>';
+
+    serviceSelect.disabled = true;
+
+    resetStaff();
+    resetSlots();
+
+    summaryService.textContent =
+        "Henüz seçilmedi";
+
+    if (!categoryId) {
+
+        serviceSelect.innerHTML =
+            '<option value="">Önce kategori seçiniz</option>';
+
+        updateSubmitState();
+
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `/Appointment/GetServicesByCategory?categoryId=${categoryId}`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Hizmetler alınamadı. HTTP ${response.status}`
+            );
+        }
+
+        const services =
+            await response.json();
+
+        if (!services || services.length === 0) {
+
+            serviceSelect.innerHTML =
+                '<option value="">Bu kategoride hizmet bulunamadı</option>';
+
+            serviceSelect.disabled = true;
+
+            updateSubmitState();
+
+            return;
+        }
+
+        serviceSelect.innerHTML =
+            '<option value="">Hizmet seçiniz</option>';
+
+       services.forEach(service => {
+
+    const option =
+        document.createElement("option");
+
+    option.value =
+        service.id;
+        
+    option.dataset.name =
+        service.name;
+
+    option.dataset.price =
+        service.price;
+
+    option.textContent =
+        `${service.name} - ${Number(service.price).toLocaleString("tr-TR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })} ₺`;
+
+    serviceSelect.appendChild(option);
+});
+
+        serviceSelect.disabled = false;
+    }
+    catch (error) {
+
+        console.error(
+            "Hizmet yükleme hatası:",
+            error
+        );
+
+        serviceSelect.innerHTML =
+            '<option value="">Hizmetler yüklenemedi</option>';
+
+        serviceSelect.disabled = true;
+    }
+
+    updateSubmitState();
+}
+
+
+        async function loadAvailableStaff() {
+
+            const serviceTypeId =
+                serviceSelect.value;
+
+            const date =
+                dateInput.value;
+
+
+            resetStaff();
+            resetSlots();
+
+
+            if (!serviceTypeId || !date) {
+                updateSubmitState();
+                return;
+            }
+
+
+            staffSelect.innerHTML =
+                '<option value="">Hizmet verenler yükleniyor...</option>';
+
+            staffSelect.disabled = true;
+
+
+            try {
+
+                const response = await fetch(
+                    `/Appointment/GetAvailableStaff` +
+                    `?serviceTypeId=${serviceTypeId}` +
+                    `&date=${date}`
+                );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Hizmet verenler alınamadı. HTTP ${response.status}`
+                    );
+                }
+
+
+                const staffs =
+                    await response.json();
+
+
+                if (!staffs || staffs.length === 0) {
+
+                    staffSelect.innerHTML =
+                        '<option value="">Bu tarihte uygun hizmet veren bulunamadı</option>';
+
+                    staffSelect.disabled = true;
+
+                    return;
+                }
+
+
+                staffSelect.innerHTML =
+                    '<option value="">Hizmet veren seçiniz</option>';
+
+
+                staffs.forEach(staff => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        staff.id;
+
+                    option.textContent =
+                        staff.fullName;
+
+                    staffSelect.appendChild(option);
+                });
+
+
+                staffSelect.disabled = false;
+
+                stepStaff.classList.add("active");
+            }
+            catch (error) {
+
+                console.error(
+                    "Hizmet veren yükleme hatası:",
+                    error
+                );
+
+                staffSelect.innerHTML =
+                    '<option value="">Hizmet verenler yüklenemedi</option>';
+
+                staffSelect.disabled = true;
+            }
+        }
+
+
+        async function loadAvailableSlots() {
+
+            const serviceTypeId =
+                serviceSelect.value;
+
+            const staffId =
+                staffSelect.value;
+
+            const date =
+                dateInput.value;
+
+
+            resetSlots();
+
+
+            if (!serviceTypeId ||
+                !staffId ||
+                !date) {
+
+                updateSubmitState();
+                return;
+            }
+
+
+            slotSelect.innerHTML =
+                '<option value="">Uygun saatler yükleniyor...</option>';
+
+            slotSelect.disabled = true;
+
+
+            try {
+
+                const response = await fetch(
+                    `/Appointment/GetAvailableSlots` +
+                    `?staffId=${staffId}` +
+                    `&serviceTypeId=${serviceTypeId}` +
+                    `&date=${date}`
+                );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Uygun saatler alınamadı. HTTP ${response.status}`
+                    );
+                }
+
+
+                const slots =
+                    await response.json();
+
+
+                if (!slots || slots.length === 0) {
+
+                    slotSelect.innerHTML =
+                        '<option value="">Bu tarihte uygun saat bulunamadı</option>';
+
+                    slotSelect.disabled = true;
+
+                    return;
+                }
+
+
+                slotSelect.innerHTML =
+                    '<option value="">Saat seçiniz</option>';
+
+
+                slots.forEach(slot => {
+
+                    const startDate =
+                        new Date(slot.startTime);
+
+
+                    const hour =
+                        startDate.toLocaleTimeString(
+                            "tr-TR",
+                            {
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            }
+                        );
+
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        slot.startTime;
+
+                    option.textContent =
+                        hour;
+
+                    slotSelect.appendChild(option);
+                });
+
+
+                slotSelect.disabled = false;
+
+                stepTime.classList.add("active");
+            }
+            catch (error) {
+
+                console.error(
+                    "Saat yükleme hatası:",
+                    error
+                );
+
+                slotSelect.innerHTML =
+                    '<option value="">Uygun saatler yüklenemedi</option>';
+
+                slotSelect.disabled = true;
+            }
+
+
+            updateSubmitState();
+        }
+        categorySelect.addEventListener(
+    "change",
+    async function () {
+
+        if (categorySelect.value) {
+
+            const selectedCategory =
+                categorySelect.options[
+                    categorySelect.selectedIndex
+                ];
+
+            summaryCategory.textContent =
+                selectedCategory.text;
+
+            setStepCompleted(stepCategory);
+
+            stepService.classList.add("active");
+        }
+        else {
+
+            summaryCategory.textContent =
+                "Henüz seçilmedi";
+
+            resetStep(stepCategory);
+            resetStep(stepService);
+        }
+
+        // Kategori değişince eski hizmet ve fiyatı temizle
+        summaryService.textContent =
+            "Henüz seçilmedi";
+
+        summaryPrice.textContent =
+            "Henüz seçilmedi";
+
+        await loadServicesByCategory();
+
+        // Tarihi temizle
+        dateInput.value = "";
+
+        summaryDate.textContent =
+            "Henüz seçilmedi";
+
+        // Hizmet veren ve saatleri temizle
+        resetStaff();
+        resetSlots();
+
+        resetStep(stepDate);
+
+        updateSubmitState();
+    }
+);
+
+
+        serviceSelect.addEventListener(
+    "change",
+    async function () {
+
+        if (serviceSelect.value) {
+
+            const selectedOption =
+                serviceSelect.options[
+                    serviceSelect.selectedIndex
+                ];
+
+            summaryService.textContent =
+                selectedOption.dataset.name;
+
+            const price =
+                selectedOption.dataset.price;
+
+            summaryPrice.textContent =
+                `${Number(price).toLocaleString(
+                    "tr-TR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                )} ₺`;
+
+            setStepCompleted(stepService);
+
+            stepDate.classList.add("active");
+        }
+        else {
+
+            summaryService.textContent =
+                "Henüz seçilmedi";
+
+            summaryPrice.textContent =
+                "Henüz seçilmedi";
+
+            resetStep(stepService);
+            resetStep(stepDate);
+        }
+
+        await loadAvailableStaff();
+
+        updateSubmitState();
+    }
+);
+
+
+        dateInput.addEventListener(
+            "change",
+            async function () {
+
+                if (dateInput.value) {
+
+                    const selectedDate =
+                        new Date(
+                            dateInput.value + "T00:00:00"
+                        );
+
+
+                    summaryDate.textContent =
+                        selectedDate.toLocaleDateString(
+                            "tr-TR"
+                        );
+
+
+                    setStepCompleted(stepDate);
+                }
+                else {
+
+                    summaryDate.textContent =
+                        "Henüz seçilmedi";
+
+                    resetStep(stepDate);
+                }
+
+
+                await loadAvailableStaff();
+
+                updateSubmitState();
+            }
+        );
+
+
+        staffSelect.addEventListener(
+            "change",
+            async function () {
+
+                if (staffSelect.value) {
+
+                    summaryStaff.textContent =
+                        staffSelect.options[
+                            staffSelect.selectedIndex
+                        ].text;
+
+
+                    setStepCompleted(stepStaff);
+                }
+                else {
+
+                    summaryStaff.textContent =
+                        "Henüz seçilmedi";
+
+                    resetStep(stepStaff);
+                }
+
+
+                await loadAvailableSlots();
+
+                updateSubmitState();
+            }
+        );
+
+
+        slotSelect.addEventListener(
+            "change",
+            function () {
+
+                finalDateInput.value =
+                    this.value;
+
+
+                if (this.value) {
+
+                    summaryTime.textContent =
+                        this.options[
+                            this.selectedIndex
+                        ].text;
+
+
+                    setStepCompleted(stepTime);
+
+                    stepConfirm.classList.add("active");
+                }
+                else {
+
+                    summaryTime.textContent =
+                        "Henüz seçilmedi";
+
+                    resetStep(stepTime);
+                    resetStep(stepConfirm);
+                }
+
+
+                updateSubmitState();
+            }
+        );
+
+    </script>
+}

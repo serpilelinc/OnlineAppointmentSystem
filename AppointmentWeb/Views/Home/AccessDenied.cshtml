@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Yetkisiz Erişim";
+}
+
+<div class="text-center mt-5">
+
+    <h1 class="display-4 text-danger">
+        403
+    </h1>
+
+    <h2>Bu işlem için yetkiniz yok.</h2>
+
+    <p class="text-muted mt-3">
+        Bu sayfaya veya işleme erişim yetkiniz bulunmuyor.
+    </p>
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-primary mt-3">
+        Ana Sayfaya Dön
+    </a>
+
+</div>
