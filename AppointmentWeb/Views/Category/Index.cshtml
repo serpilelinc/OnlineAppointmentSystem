@@ -69,7 +69,7 @@
                         <form asp-controller="Category"
                               asp-action="Delete"
                               method="post"
-                              onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');">
+                              onsubmit="confirmFormSubmit(event, 'Bu kategoriyi silmek istediğinize emin misiniz?');">
 
                             <input type="hidden"
                                    name="id"
@@ -93,23 +93,16 @@
 }
 else
 {
-    <div class="empty-category-state">
-
-        <div class="empty-category-icon">
-            📁
+    <div class="empty-state animate-fade-in-up">
+        <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
         </div>
-
-        <h4>Henüz kategori bulunmuyor</h4>
-
-        <p>
-            Hizmetlerinizi düzenlemek için ilk kategorinizi oluşturun.
-        </p>
-
-        <a asp-controller="Category"
-           asp-action="Create"
-           class="btn btn-filter">
-            + İlk Kategoriyi Oluştur
+        <h4>Henüz bir hizmet kategorisi yok</h4>
+        <p>Hizmetlerinizi düzenli bir şekilde sunmak için ilk kategorinizi hemen oluşturun.</p>
+        <a asp-controller="Category" asp-action="Create" class="btn btn-primary px-4 py-2" style="border-radius: 12px; font-weight: 600;">
+            <i class="bi bi-plus-lg me-2"></i> İlk Kategoriyi Oluştur
         </a>
-
     </div>
 }

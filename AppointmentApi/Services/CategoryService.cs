@@ -2,16 +2,19 @@ using AppointmentApi.Data;
 using AppointmentApi.DTOs;
 using AppointmentApi.Models;
 using Microsoft.EntityFrameworkCore;
+using AppointmentApi.UnitOfWork;
 
 namespace AppointmentApi.Services
 {
     public class CategoryService
     {
         private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(AppDbContext context)
+        public CategoryService(AppDbContext context, IUnitOfWork unitOfWork)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CategoryResponseDto> CreateAsync(
@@ -25,7 +28,7 @@ namespace AppointmentApi.Services
 
             _context.Categories.Add(category);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return new CategoryResponseDto
             {
@@ -72,7 +75,7 @@ namespace AppointmentApi.Services
 
             _context.Categories.Remove(category);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

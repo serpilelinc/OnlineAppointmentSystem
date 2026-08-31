@@ -160,13 +160,26 @@ namespace AppointmentWeb.Controllers
                 );
             }
 
-            var errorMessage =
-                await response.Content.ReadAsStringAsync();
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var cleanMessage = "Bir hata oluştu.";
+            try 
+            {
+                var errorObj = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(errorContent);
+                if (errorObj.TryGetProperty("message", out var msgProp))
+                {
+                    cleanMessage = msgProp.GetString();
+                }
+                else
+                {
+                    cleanMessage = errorContent;
+                }
+            }
+            catch 
+            {
+                cleanMessage = errorContent;
+            }
 
-            ModelState.AddModelError(
-                string.Empty,
-                $"Randevu oluşturulamadı: {errorMessage}"
-            );
+            TempData["ErrorMessage"] = cleanMessage;
 
             await LoadCreateDropdowns(client);
 
@@ -186,11 +199,19 @@ namespace AppointmentWeb.Controllers
                     "api/Staff"
                 );
 
+            var categories =
+                await client.GetFromJsonAsync<List<CategoryViewModel>>(
+                    "api/Category"
+                );
+
             ViewBag.ServiceTypes =
                 serviceTypes ?? new List<ServiceTypeViewModel>();
 
             ViewBag.Staff =
                 staff ?? new List<StaffViewModel>();
+
+            ViewBag.Categories =
+                categories ?? new List<CategoryViewModel>();
         }
 
         [HttpGet]
@@ -265,13 +286,26 @@ namespace AppointmentWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var errorMessage =
-                await response.Content.ReadAsStringAsync();
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var cleanMessage = "Bir hata oluştu.";
+            try 
+            {
+                var errorObj = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(errorContent);
+                if (errorObj.TryGetProperty("message", out var msgProp))
+                {
+                    cleanMessage = msgProp.GetString();
+                }
+                else
+                {
+                    cleanMessage = errorContent;
+                }
+            }
+            catch 
+            {
+                cleanMessage = errorContent;
+            }
 
-            ModelState.AddModelError(
-                string.Empty,
-                $"Randevu güncellenemedi: {errorMessage}"
-            );
+            TempData["ErrorMessage"] = cleanMessage;
 
             await LoadCreateDropdowns(client);
 

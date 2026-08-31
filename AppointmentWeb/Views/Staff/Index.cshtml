@@ -80,18 +80,16 @@
                                 Yönet
                             </a>
                             <form asp-controller="Staff"
-      asp-action="Delete"
-      asp-route-id="@staff.Id"
-      method="post"
-      class="d-inline"
-      onsubmit="return confirm('@staff.FullName adlı hizmet vereni silmek istediğinize emin misiniz?');">
-
-    <button type="submit"
-            class="btn btn-danger btn-sm">
-        Sil
-    </button>
-
-</form>
+                                  asp-action="Delete"
+                                  asp-route-id="@staff.Id"
+                                  method="post"
+                                  class="d-inline"
+                                  id="deleteForm-@staff.Id">
+                                <input type="hidden" name="forceDelete" id="forceDelete-@staff.Id" value="false" />
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(@staff.Id, '@Html.Raw(staff.FullName.Replace("'", "\\'"))')">
+                                    Sil
+                                </button>
+                            </form>
                         </td>
 
 
@@ -140,7 +138,69 @@
 }
 else
 {
-    <div class="alert alert-info mt-4">
-        Sistemde kayıtlı Hizmet Veren bulunamadı.
+    <div class="empty-state animate-fade-in-up mt-4">
+        <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+        </div>
+        <h4>Ekibinizde henüz kimse yok</h4>
+        <p>Müşterilerinize hizmet sunabilmek için ilk personelinizi sisteme dahil edin.</p>
+        <a asp-controller="Staff" asp-action="Manage" class="btn btn-primary px-4 py-2" style="border-radius: 12px; font-weight: 600;">
+            <i class="bi bi-person-plus-fill me-2"></i> Yeni Personel Ekle
+        </a>
     </div>
+}
+
+@section Scripts {
+    <script>
+        function confirmDelete(staffId, staffName) {
+            $.ajax({
+                url: '/Staff/CheckFutureAppointments/' + staffId,
+                type: 'GET',
+                success: function(response) {
+                    var count = response.count;
+                    if (count > 0) {
+                        Swal.fire({
+                            title: 'Emin misiniz?',
+                            html: `<b>${staffName}</b> adlı personelin gelecekte <b>${count}</b> adet iptal edilmemiş randevusu bulunmaktadır.<br><br>Personeli silerseniz bu randevular <b>otomatik iptal edilecek</b> ve müşterilere bilgilendirme e-postası gönderilecektir. Onaylıyor musunuz?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Evet, Sil ve İptal Et',
+                            cancelButtonText: 'Hayır, Vazgeç',
+                            customClass: {
+                                confirmButton: 'swal2-confirm',
+                                cancelButton: 'swal2-cancel'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#forceDelete-' + staffId).val('true');
+                                $('#deleteForm-' + staffId).submit();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Emin misiniz?',
+                            text: `${staffName} adlı personeli silmek istediğinize emin misiniz?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Evet, Sil',
+                            cancelButtonText: 'Hayır, İptal',
+                            customClass: {
+                                confirmButton: 'swal2-confirm',
+                                cancelButton: 'swal2-cancel'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#deleteForm-' + staffId).submit();
+                            }
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire('Hata', 'Randevu bilgileri kontrol edilemedi.', 'error');
+                }
+            });
+        }
+    </script>
 }

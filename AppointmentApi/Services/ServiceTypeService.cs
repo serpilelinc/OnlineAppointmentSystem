@@ -4,6 +4,7 @@ using AppointmentApi.Exceptions;
 using AppointmentApi.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using AppointmentApi.UnitOfWork;
 
 namespace AppointmentApi.Services
 {
@@ -11,13 +12,16 @@ namespace AppointmentApi.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public ServiceTypeService(
             AppDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _context = context;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ServiceTypeResponseDto> CreateAsync(
@@ -41,7 +45,7 @@ namespace AppointmentApi.Services
 
             _context.ServiceTypes.Add(serviceType);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             var result =
                 _mapper.Map<ServiceTypeResponseDto>(serviceType);
@@ -181,7 +185,7 @@ namespace AppointmentApi.Services
             serviceType.CategoryId = category.Id;
             serviceType.Category = category;
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return new ServiceTypeResponseDto
             {
@@ -209,7 +213,7 @@ namespace AppointmentApi.Services
 
             _context.ServiceTypes.Remove(serviceType);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

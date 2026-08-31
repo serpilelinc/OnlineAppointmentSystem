@@ -440,6 +440,17 @@ else if (userRole == "Admin")
             document.addEventListener('DOMContentLoaded', function () {
                 var ctx = document.getElementById('appointmentChart');
                 if(ctx) {
+                    function getThemeColor(varName, fallback) {
+                        var val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+                        if (!val) val = getComputedStyle(document.body).getPropertyValue(varName).trim();
+                        return val || fallback;
+                    }
+                    
+                    var pendingColor = getThemeColor('--secondary', '#f59e0b');
+                    var confirmedColor = getThemeColor('--primary', '#3b82f6');
+                    var completedColor = getThemeColor('--primary-dark', '#10b981');
+                    var cancelledColor = getThemeColor('--text-muted', '#ef4444');
+
                     var chart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
@@ -452,10 +463,10 @@ else if (userRole == "Admin")
                                     @Model.CancelledAppointments
                                 ],
                                 backgroundColor: [
-                                    '#f59e0b', // warning/amber
-                                    '#3b82f6', // primary/blue
-                                    '#10b981', // success/emerald
-                                    '#ef4444'  // danger/red
+                                    pendingColor,
+                                    confirmedColor,
+                                    completedColor,
+                                    cancelledColor
                                 ],
                                 borderWidth: 0,
                                 hoverOffset: 10

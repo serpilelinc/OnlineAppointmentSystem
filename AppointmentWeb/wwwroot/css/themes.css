@@ -1,0 +1,401 @@
+/* 1. RandevuPlus Classic (Default Theme) */
+:root,
+[data-theme="classic"] {
+    --primary: #7d2ae8;
+    --primary-dark: #5e1bb3;
+    --primary-soft: rgba(125, 42, 232, 0.08);
+    --secondary: #00c4cc;
+    
+    --success: #10b981;
+    --danger: #ff007f;
+    --warning: #ff9900;
+    
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    
+    --text: #1f2937;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+    
+    --border: #e5e7eb;
+    --border-strong: #cbd5e1;
+    
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 12px 30px rgba(125, 42, 232, 0.1);
+    --shadow-primary: 0 4px 15px rgba(125, 42, 232, 0.2);
+    
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, #2e0654 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 2. Ocean Breeze */
+[data-theme="ocean"] {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-soft: rgba(2, 132, 199, 0.08);
+    --secondary: #06b6d4;
+    
+    --bg: #f0f9ff;
+    --surface: #ffffff;
+    --surface-soft: #e0f2fe;
+    
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-inverse: #ffffff;
+    
+    --border: #bae6fd;
+    --border-strong: #7dd3fc;
+    
+    --shadow-sm: 0 1px 2px rgba(2, 132, 199, 0.05);
+    --shadow-md: 0 4px 12px rgba(2, 132, 199, 0.08);
+    --shadow-lg: 0 12px 30px rgba(2, 132, 199, 0.15);
+    --shadow-primary: 0 4px 15px rgba(2, 132, 199, 0.25);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 3. Forest Calm */
+[data-theme="forest"] {
+    --primary: #166534;
+    --primary-dark: #14532d;
+    --primary-soft: rgba(22, 101, 52, 0.08);
+    --secondary: #86efac;
+    
+    --bg: #fefce8;
+    --surface: #ffffff;
+    --surface-soft: #fef3c7;
+    
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    
+    --text: #171717;
+    --text-muted: #525252;
+    --text-inverse: #ffffff;
+    
+    --border: #dcfce3;
+    --border-strong: #bbf7d0;
+    
+    --shadow-sm: 0 1px 2px rgba(22, 101, 52, 0.05);
+    --shadow-md: 0 4px 12px rgba(22, 101, 52, 0.05);
+    --shadow-lg: 0 12px 30px rgba(22, 101, 52, 0.1);
+    --shadow-primary: 0 4px 15px rgba(22, 101, 52, 0.2);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 4. Sunset Warmth */
+[data-theme="sunset"] {
+    --primary: #f43f5e;
+    --primary-dark: #e11d48;
+    --primary-soft: rgba(244, 63, 94, 0.08);
+    --secondary: #f97316;
+    
+    --bg: #fff7ed;
+    --surface: #ffffff;
+    --surface-soft: #ffedd5;
+    
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    
+    --text: #431407;
+    --text-muted: #78350f;
+    --text-inverse: #ffffff;
+    
+    --border: #fed7aa;
+    --border-strong: #fdba74;
+    
+    --shadow-sm: 0 1px 2px rgba(244, 63, 94, 0.05);
+    --shadow-md: 0 4px 12px rgba(244, 63, 94, 0.08);
+    --shadow-lg: 0 12px 30px rgba(244, 63, 94, 0.15);
+    --shadow-primary: 0 4px 15px rgba(244, 63, 94, 0.25);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 5. Midnight Pro (Dark Theme) */
+[data-theme="midnight"] {
+    --primary: #a855f7;
+    --primary-dark: #9333ea;
+    --primary-soft: rgba(168, 85, 247, 0.15);
+    --secondary: #38bdf8;
+    
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-soft: #334155;
+    
+    --glass-bg: rgba(30, 41, 59, 0.85);
+    --glass-border: rgba(148, 163, 184, 0.2);
+    
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-inverse: #0f172a;
+    
+    --border: #334155;
+    --border-strong: #475569;
+    
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 30px rgba(168, 85, 247, 0.15);
+    --shadow-primary: 0 4px 15px rgba(168, 85, 247, 0.3);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 6. Monochrome */
+[data-theme="monochrome"] {
+    --primary: #171717;
+    --primary-dark: #000000;
+    --primary-soft: rgba(23, 23, 23, 0.08);
+    --secondary: #525252;
+    
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-soft: #f5f5f5;
+    
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: #e5e5e5;
+    
+    --text: #171717;
+    --text-muted: #737373;
+    --text-inverse: #ffffff;
+    
+    --border: #d4d4d4;
+    --border-strong: #a3a3a3;
+    
+    --shadow-sm: none;
+    --shadow-md: 4px 4px 0px rgba(0, 0, 0, 1);
+    --shadow-lg: 8px 8px 0px rgba(0, 0, 0, 1);
+    --shadow-primary: 4px 4px 0px rgba(0, 0, 0, 1);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 7. Leopard Luxe */
+[data-theme="leopard"] {
+    --primary: #b45309;
+    --primary-dark: #78350f;
+    --primary-soft: rgba(180, 83, 9, 0.08);
+    --secondary: #d97706;
+    
+    --bg: #fffbeb;
+    --surface: #ffffff;
+    --surface-soft: #fef3c7;
+    
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(180, 83, 9, 0.2);
+    
+    --text: #451a03;
+    --text-muted: #78350f;
+    --text-inverse: #ffffff;
+    
+    --border: #fde68a;
+    --border-strong: #fcd34d;
+    
+    --shadow-sm: 0 1px 2px rgba(180, 83, 9, 0.1);
+    --shadow-md: 0 4px 12px rgba(180, 83, 9, 0.08);
+    --shadow-lg: 0 12px 30px rgba(180, 83, 9, 0.15);
+    --shadow-primary: 0 4px 15px rgba(180, 83, 9, 0.2);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 8. Spider Theme */
+[data-theme="spider"] {
+    --primary: #dc2626;
+    --primary-dark: #991b1b;
+    --primary-soft: rgba(220, 38, 38, 0.08);
+    --secondary: #1e3a8a;
+    
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-soft: #f1f5f9;
+    
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(220, 38, 38, 0.3);
+    
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-inverse: #ffffff;
+    
+    --border: #cbd5e1;
+    --border-strong: #94a3b8;
+    
+    --shadow-sm: 0 1px 2px rgba(30, 58, 138, 0.1);
+    --shadow-md: 0 4px 12px rgba(30, 58, 138, 0.1);
+    --shadow-lg: 0 12px 30px rgba(220, 38, 38, 0.15);
+    --shadow-primary: 0 4px 15px rgba(220, 38, 38, 0.25);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* 9. Pink Dream */
+[data-theme="pink-dream"] {
+    --primary: #ec4899;
+    --primary-dark: #be185d;
+    --primary-soft: rgba(236, 72, 153, 0.08);
+    --secondary: #f472b6;
+    
+    --bg: #fdf2f8;
+    --surface: #ffffff;
+    --surface-soft: #fce7f3;
+    
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.7);
+    
+    --text: #831843;
+    --text-muted: #9d174d;
+    --text-inverse: #ffffff;
+    
+    --border: #fbcfe8;
+    --border-strong: #f9a8d4;
+    
+    --shadow-sm: 0 1px 2px rgba(236, 72, 153, 0.05);
+    --shadow-md: 0 4px 12px rgba(236, 72, 153, 0.08);
+    --shadow-lg: 0 12px 30px rgba(236, 72, 153, 0.15);
+    --shadow-primary: 0 4px 15px rgba(236, 72, 153, 0.25);
+
+    /* Sidebar Specific */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.9);
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.2);
+    --sidebar-hover-text: #ffffff;
+    --sidebar-border: transparent;
+}
+
+/* ==========================================
+   UNIVERSAL DARK MODE OVERRIDES
+   Bu yapı, aktif tema ne olursa olsun sadece arkaplan ve yazı renklerini ezer.
+   Primary (Ana renk) değişkenlerine dokunmaz, böylece her temanın karanlık modu oluşur.
+========================================== */
+html[data-mode="dark"] {
+    --bg: #0f172a; /* Slate 900 */
+    --surface: #1e293b; /* Slate 800 */
+    --surface-soft: #334155; /* Slate 700 */
+    
+    --glass-bg: rgba(30, 41, 59, 0.85);
+    --glass-border: rgba(30, 41, 59, 0.6);
+    
+    --text: #f8fafc; /* Slate 50 */
+    --text-muted: #94a3b8; /* Slate 400 */
+    --text-inverse: #0f172a;
+    
+    --border: #334155; /* Slate 700 */
+    --border-strong: #475569; /* Slate 600 */
+    
+    /* Gölgeleri biraz daha yumuşatmak için opacity değerleri düşürülür */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+    
+    /* Sidebar arkaplanını eziyoruz: Temanın koyu renginden gece siyahına geçiş */
+    --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, #111111 100%);
+    --sidebar-text: #f8fafc;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+    --sidebar-hover-text: #ffffff;
+}
+
+/* ==========================================
+   SWEETALERT2 DYNAMIC THEME OVERRIDES
+   Tüm bildirimlerin (SweetAlert) mevcut temaya uymasını sağlar
+========================================== */
+div.swal2-popup {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 1rem !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+div.swal2-title, div.swal2-html-container, div.swal2-html-container b {
+    color: var(--text) !important;
+}
+
+button.swal2-confirm {
+    background-color: var(--primary) !important;
+    color: var(--text-inverse) !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    box-shadow: var(--shadow-primary) !important;
+}
+
+button.swal2-confirm:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+button.swal2-cancel {
+    background-color: var(--surface-soft) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 0.5rem !important;
+}
+
+button.swal2-cancel:hover {
+    background-color: var(--border) !important;
+}
+
+div.swal2-icon.swal2-warning {
+    border-color: var(--secondary) !important;
+    color: var(--secondary) !important;
+}
+
+div.swal2-icon.swal2-success {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+}
+
+div.swal2-icon.swal2-error {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+div.swal2-icon.swal2-info {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+}

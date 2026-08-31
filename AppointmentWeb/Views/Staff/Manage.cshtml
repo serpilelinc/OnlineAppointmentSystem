@@ -117,7 +117,7 @@
 
             <button type="submit"
                     class="btn btn-outline-danger btn-sm"
-                    onclick="return confirm('Bu hizmet atamasını kaldırmak istediğinize emin misiniz?');">
+                    onclick="confirmFormSubmit(event, 'Bu hizmet atamasını kaldırmak istediğinize emin misiniz?');">
                 × Kaldır
             </button>
 
@@ -237,7 +237,7 @@
 
         <button type="submit"
                 class="btn btn-danger btn-sm"
-                onclick="return confirm('Bu çalışma saatini silmek istediğinize emin misiniz?');">
+                onclick="confirmFormSubmit(event, 'Bu çalışma saatini silmek istediğinize emin misiniz?');">
             Sil
         </button>
 

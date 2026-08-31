@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>@ViewData["Title"] - RandevuPlus</title>
+    <link rel="icon" type="image/jpeg" href="~/images/favicon.jpg" />
 
     <script type="importmap"></script>
+
+    <script>
+        // Sayfa çizilmeden önce temayı uygula (FOUC önlemi)
+        const currentUserName = '@(Context.Session.GetString("UserName") ?? "guest")';
+        let savedTheme = 'classic';
+        let savedMode = 'light';
+        
+        if (currentUserName !== 'guest') {
+            const themeStorageKey = 'randevuplus-theme-' + currentUserName;
+            window.themeStorageKey = themeStorageKey; // For site.js
+            
+            // Kullanıcının kendi teması yoksa, son global temayı al
+            savedTheme = localStorage.getItem(themeStorageKey) || localStorage.getItem('randevuplus-theme-global-last') || 'classic';
+            savedMode = localStorage.getItem(themeStorageKey + '-mode') || localStorage.getItem('randevuplus-theme-global-last-mode') || 'light';
+        } else {
+            // Misafir (Login sayfası) - Son bilinen global temayı kullan
+            window.themeStorageKey = 'randevuplus-theme-global-last'; 
+            savedTheme = localStorage.getItem('randevuplus-theme-global-last') || 'classic';
+            savedMode = localStorage.getItem('randevuplus-theme-global-last-mode') || 'light';
+        }
+        
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-mode', savedMode);
+    </script>
 
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +43,10 @@
 
     <link rel="stylesheet"
           href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/themes.css"
+          asp-append-version="true" />
 
     <link rel="stylesheet"
           href="~/css/site.css"
@@ -44,9 +73,7 @@
         <nav class="navbar navbar-expand-sm navbar-dark glass-navbar mb-4">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center fw-bold text-white text-decoration-none" asp-controller="Home" asp-action="Index" style="font-size: 1.5rem; letter-spacing: -0.5px;">
-                    <div class="d-flex align-items-center justify-content-center me-2" style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(125,42,232,0.4);">
-                        <i class="bi bi-calendar-check-fill text-white" style="font-size: 1.3rem;"></i>
-                    </div>
+                    <img src="~/images/favicon.jpg" alt="Logo" class="me-2 rounded-3 shadow-sm" style="width: 38px; height: 38px; object-fit: cover;" asp-append-version="true" />
                     <span>Randevu<span style="color: var(--secondary);">Plus</span></span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
@@ -83,11 +110,9 @@ else
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="glass-sidebar" id="sidebar-wrapper">
-            <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-white border-bottom border-light">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-white d-flex align-items-center justify-content-center fw-bold" style="letter-spacing: -0.5px;">
-                    <div class="d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(125,42,232,0.4);">
-                        <i class="bi bi-calendar-check-fill text-white" style="font-size: 1.4rem;"></i>
-                    </div>
+            <div class="sidebar-heading text-center py-4 fs-4 fw-bold border-bottom">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none d-flex align-items-center justify-content-center fw-bold" style="letter-spacing: -0.5px;">
+                    <img src="~/images/favicon.jpg" alt="Logo" class="rounded-3 shadow-sm me-2" style="width: 45px; height: 45px; object-fit: cover;" asp-append-version="true" />
                     <span>Randevu<span style="color: var(--secondary);">Plus</span></span>
                 </a>
             </div>
@@ -153,7 +178,7 @@ else
                             <span class="text-dark fw-bold d-block" style="line-height: 1.2;">@userName</span>
                             <small class="text-primary fw-medium">@userRole</small>
                         </div>
-                        <a class="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2" asp-controller="Auth" asp-action="Logout">
+                        <a class="btn btn-outline-primary btn-sm rounded-pill px-3 ms-2" asp-controller="Auth" asp-action="Logout">
                             <i class="bi bi-box-arrow-right"></i> Çıkış
                         </a>
                     </div>
@@ -184,22 +209,33 @@ else
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Global SweetAlert2 Logic
+    // Global SweetAlert2 Toast Logic
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+        background: 'var(--surface)',
+        color: 'var(--text)',
+        customClass: {
+            popup: 'shadow-lg border-0 rounded-4'
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
     var successMsg = '@Html.Raw(TempData["SuccessMessage"])';
     var errorMsg = '@Html.Raw(TempData["ErrorMessage"])';
 
     if (successMsg && successMsg !== '') {
-        Swal.fire({
+        Toast.fire({
             icon: 'success',
-            title: 'Harika!',
-            text: successMsg,
-            confirmButtonColor: 'var(--secondary)',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdrop: 'rgba(125,42,232,0.15)',
-            customClass: {
-                popup: 'rounded-4 shadow-lg'
-            }
+            title: successMsg
         });
+        
         // Eski tip düz yeşil/kırmızı mesajları gizle
         setTimeout(() => {
             document.querySelectorAll('.alert-success, .alert-danger').forEach(el => el.style.display = 'none');
@@ -207,22 +243,63 @@ else
     }
     
     if (errorMsg && errorMsg !== '') {
-        Swal.fire({
+        Toast.fire({
             icon: 'error',
-            title: 'Oops...',
-            text: errorMsg,
-            confirmButtonColor: 'var(--primary)',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdrop: 'rgba(125,42,232,0.15)',
-            customClass: {
-                popup: 'rounded-4 shadow-lg'
-            }
+            title: errorMsg
         });
+
         setTimeout(() => {
             document.querySelectorAll('.alert-success, .alert-danger').forEach(el => el.style.display = 'none');
         }, 10);
     }
 </script>
+
+<!-- SIGNALR REAL-TIME NOTIFICATIONS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var userRole = '@userRole';
+        
+        // Sadece Admin ve Staff personeli dinlesin
+        if (userRole === 'Admin' || userRole === 'Staff') {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("http://localhost:5065/hubs/appointment")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNewAppointment", function (customerName, appointmentDate) {
+                // Tema uyumlu Toast ile göster
+                Toast.fire({
+                    icon: 'info',
+                    title: 'Yeni Randevu!',
+                    text: `${customerName}, ${appointmentDate} tarihi için randevu oluşturdu.`
+                });
+            });
+
+            connection.start().catch(function (err) {
+                console.error("SignalR Bağlantı Hatası: ", err.toString());
+            });
+        }
+    });
+</script>
+
+<!-- Dark Mode Toggle Button -->
+<button type="button" class="theme-toggle-btn shadow-lg" onclick="toggleDarkMode()" aria-label="Gece/Gündüz Modu Değiştir">
+    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+</button>
 
 @await RenderSectionAsync(
     "Scripts",

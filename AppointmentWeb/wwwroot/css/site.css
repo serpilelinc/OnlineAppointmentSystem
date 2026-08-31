@@ -10,30 +10,14 @@ html {
     }
 }
 
-:root {
-    --primary: #7d2ae8; /* Canva Purple */
-    --primary-dark: #5e1bb3;
-    --secondary: #00c4cc; /* Canva Teal */
-    --success: #10b981;
-    --danger: #ff007f; /* Canva Pink */
-    --warning: #ff9900; /* Vibrant Orange */
-
-    --bg: #f8f9fa; /* Clean light bg */
-    --surface: #ffffff;
-
-    --text: #1f2937;
-    --muted: #6b7280;
-
-    --border: #e5e7eb;
-}
-
 body {
     margin: 0;
     padding-bottom: 80px;
 
     background: var(--bg);
-    background-image: radial-gradient(circle at top left, rgba(125,42,232,0.05), transparent 30%),
-                      radial-gradient(circle at bottom right, rgba(0,196,204,0.05), transparent 30%);
+    /* Dinamik tema uyumlu arkaplan efekti */
+    background-image: radial-gradient(circle at top left, var(--primary-soft), transparent 30%),
+                      radial-gradient(circle at bottom right, var(--primary-soft), transparent 30%);
 
     color: var(--text);
 
@@ -97,17 +81,17 @@ body {
 
 /* Glass Cards */
 .glass-card {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: var(--glass-bg) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid var(--glass-border) !important;
     border-radius: 16px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 .glass-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(125, 42, 232, 0.15);
+    box-shadow: var(--shadow-primary);
 }
 
 /* Image Hover */
@@ -127,14 +111,13 @@ body {
 ========================= */
 
 .glass-navbar {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: var(--glass-bg) !important;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: none !important;
-    border-bottom: 2px solid white !important;
+    border-bottom: 1px solid var(--glass-border) !important;
 
-    box-shadow:
-        0 8px 30px rgba(167, 139, 250, 0.08);
+    box-shadow: var(--shadow-md);
 
     padding-top: 15px;
     padding-bottom: 15px;
@@ -144,22 +127,22 @@ body {
 #sidebar-wrapper {
     min-height: 100vh;
     width: 260px;
-    background: linear-gradient(180deg, var(--primary-dark) 0%, #2e0654 100%);
-    border-right: none;
-    box-shadow: 4px 0 24px rgba(125, 42, 232, 0.3);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    box-shadow: var(--shadow-sm);
     transition: margin 0.25s ease-out;
 }
 
 .sidebar-heading {
     padding: 1.2rem 1.25rem;
     font-size: 1.3rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-bottom: 1px solid var(--sidebar-border) !important;
 }
 
 .sidebar-heading a {
-    color: #ffffff !important;
+    color: var(--sidebar-text) !important;
     letter-spacing: -0.5px;
-    text-shadow: 0 2px 10px rgba(167, 139, 250, 0.4);
+    text-shadow: none;
 }
 
 .sidebar-link {
@@ -167,7 +150,7 @@ body {
     align-items: center;
     gap: 12px;
     padding: 14px 20px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--sidebar-text);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.25s ease;
@@ -177,18 +160,18 @@ body {
 
 .sidebar-link i {
     font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--sidebar-text);
     transition: color 0.25s ease;
 }
 
 .sidebar-link:hover, .sidebar-link.active {
-    background: rgba(255, 255, 255, 0.3);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-hover-text);
+    box-shadow: none;
 }
 
 .sidebar-link:hover i, .sidebar-link.active i {
-    color: #ffffff;
+    color: var(--sidebar-hover-text);
 }
 
 .navbar-brand {
@@ -273,14 +256,15 @@ h6 {
 .card {
     border: 1px solid var(--border);
     border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(125, 42, 232, 0.1);
+    box-shadow: var(--shadow-primary);
 }
 
 .card-body {
@@ -313,22 +297,36 @@ h6 {
 
 .btn-primary:hover {
     color: white;
-    background: linear-gradient(135deg, var(--primary-dark), #10b981);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
 }
 
 .btn-success {
     border: none;
-    background: linear-gradient(135deg, #34d399, #10b981);
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    color: white;
+}
+.btn-success:hover {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
 }
 
 .btn-danger {
     border: none;
-    background: linear-gradient(135deg, #fb7185, #f43f5e);
+    background: linear-gradient(135deg, var(--text-muted), var(--text));
+    color: white;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, var(--text), var(--text-inverse));
+    color: white;
 }
 
 .btn-warning {
     border: none !important;
-    background: linear-gradient(135deg, #fcd34d, #f59e0b) !important;
+    background: linear-gradient(135deg, var(--primary-soft), var(--secondary)) !important;
+    color: var(--text) !important;
+}
+.btn-warning:hover {
+    background: linear-gradient(135deg, var(--secondary), var(--primary)) !important;
     color: white !important;
 }
 
@@ -348,7 +346,7 @@ h6 {
 .btn-outline-danger {
     border: 2px solid var(--danger);
     color: var(--danger);
-    background: white;
+    background: var(--surface);
     box-shadow: none;
 }
 .btn-outline-danger:hover {
@@ -366,18 +364,24 @@ h6 {
     border-radius: 8px;
     border: 1px solid var(--border);
     min-height: 48px;
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
     padding: 10px 16px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
     border-color: var(--primary);
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(125, 42, 232, 0.15);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.8;
 }
 
 .form-label {
@@ -400,22 +404,22 @@ h6 {
 
 .table {
     margin-bottom: 0;
-    background-color: white !important;
+    background-color: var(--surface) !important;
     color: var(--text) !important;
     --bs-table-bg: transparent;
     --bs-table-color: var(--text);
-    --bs-table-hover-bg: #f8fafc;
+    --bs-table-hover-bg: var(--surface-soft);
     --bs-table-hover-color: var(--text);
 }
 
 .table thead th {
-    background: linear-gradient(90deg, #f8fafc, #f1f5f9) !important;
-    color: var(--primary-dark) !important;
+    background: var(--surface-soft) !important;
+    color: var(--text) !important;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.8rem;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--border) !important;
+    border-bottom: 2px solid var(--border-strong) !important;
     padding-top: 16px;
     padding-bottom: 16px;
 }
@@ -425,14 +429,14 @@ h6 {
     padding-top: 14px;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--border) !important;
-    background-color: white !important;
+    background-color: var(--surface) !important;
     color: var(--text) !important;
     font-weight: 500;
 }
 
 .table-hover tbody tr:hover td {
-    background-color: rgba(125, 42, 232, 0.04) !important;
-    color: var(--primary-dark) !important;
+    background-color: var(--primary-soft) !important;
+    color: var(--primary) !important;
 }
 
 /* =========================
@@ -459,9 +463,9 @@ h6 {
     border: 1px solid #fecaca !important;
 }
 .badge.bg-secondary {
-    background-color: #f8fafc !important;
+    background-color: var(--surface-soft) !important;
     color: #64748b !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid var(--border) !important;
 }
 
 
@@ -488,29 +492,35 @@ h6 {
     box-shadow: 0 5px 15px rgba(15, 23, 42, 0.05);
 }
 
-.alert-light, .bg-light, .bg-white {
-    background-color: #ffffff !important;
-    color: #1e293b !important;
-    border: 1px solid #e2e8f0 !important;
+.alert-light, .bg-light {
+    background-color: var(--surface-soft) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.bg-white {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
 }
 
 /* =========================
    BOOTSTRAP GLOBAL COMPONENTS
 ========================= */
 .modal-content, .dropdown-menu, .list-group-item {
-    background-color: #ffffff !important;
-    color: #1e293b !important;
-    border-color: #e2e8f0 !important;
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
 }
 .dropdown-item, .list-group-item {
-    color: #1e293b !important;
+    color: var(--text) !important;
 }
 .dropdown-item:hover, .dropdown-item:focus, .list-group-item:hover {
-    background-color: #f8fafc !important;
+    background-color: var(--surface-soft) !important;
     color: var(--primary) !important;
 }
 .modal-header, .modal-footer {
-    border-color: #e2e8f0 !important;
+    border-color: var(--border) !important;
 }
 
 .alert-success {
@@ -643,9 +653,9 @@ h6 {
     min-width: 140px;
     padding: 12px 18px;
     border-radius: 12px;
-    background: white;
+    background: var(--surface);
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
 }
@@ -654,11 +664,11 @@ h6 {
     min-height: 130px;
     padding: 20px;
     border-radius: 12px;
-    background: white;
+    background: var(--surface);
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
@@ -678,7 +688,7 @@ h6 {
 
 .dashboard-stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(125, 42, 232, 0.15);
+    box-shadow: var(--shadow-primary);
 }
 
 .dashboard-stat-card:hover::before {
@@ -711,63 +721,52 @@ h6 {
 
 .stat-today {
     border-color: var(--primary);
-    background: white;
 }
-
 .stat-today .stat-icon {
-    background: rgba(37, 99, 235, 0.1);
+    background: var(--primary-soft);
     color: var(--primary);
 }
 
 .stat-pending {
-    border-color: #f59e0b;
-    background: white;
+    border-color: var(--secondary);
 }
-
 .stat-pending .stat-icon {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    background: var(--surface-soft);
+    color: var(--secondary);
 }
 
 .stat-confirmed {
-    border-color: #3b82f6;
-    background: white;
+    border-color: var(--primary);
 }
-
 .stat-confirmed .stat-icon {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    background: var(--primary-soft);
+    color: var(--primary);
 }
 
 .stat-completed {
-    border-color: #10b981;
-    background: white;
+    border-color: var(--primary-dark);
 }
-
 .stat-completed .stat-icon {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+    background: var(--surface-soft);
+    color: var(--primary-dark);
 }
 
 .stat-cancelled {
-    border-color: #ef4444;
-    background: white;
+    border-color: var(--text-muted);
 }
-
 .stat-cancelled .stat-icon {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: var(--surface-soft);
+    color: var(--text-muted);
 }
 
 .stat-total {
-    border-color: #6366f1;
-    background: white;
+    border-color: var(--text);
+}
+.stat-total .stat-icon {
+    background: var(--surface-soft);
+    color: var(--text);
 }
 
-.stat-total .stat-icon {
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
-}
 
 
 /* DASHBOARD QUICK ACTIONS */
@@ -781,7 +780,7 @@ h6 {
 .dashboard-action-button {
     text-decoration: none;
     color: var(--text);
-    background: white;
+    background: var(--surface);
     padding: 20px;
     border-radius: 12px;
     display: flex;
@@ -893,67 +892,67 @@ h6 {
 
 /* Düzenle */
 .table .btn-warning {
-    background: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    border: 1px solid var(--secondary);
 }
 
 .table .btn-warning:hover {
-    background: #ffedd5;
-    color: #9a3412;
-    border-color: #fdba74;
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
 }
 
 /* Onayla */
 .table .btn-primary {
-    background: #eef2ff;
-    color: #4338ca;
-    border: 1px solid #c7d2fe;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid var(--primary);
 }
 
 .table .btn-primary:hover {
-    background: #4f46e5;
+    background: var(--primary);
     color: white;
-    border-color: #4f46e5;
+    border-color: var(--primary);
 }
 
 /* Tamamla */
 .table .btn-success {
-    background: #ecfdf3;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background: var(--surface-soft);
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
 }
 
 .table .btn-success:hover {
-    background: #16a34a;
+    background: var(--secondary);
     color: white;
-    border-color: #16a34a;
+    border-color: var(--secondary);
 }
 
 /* İptal Et */
 .table .btn-outline-danger {
-    background: #fff;
-    color: #dc2626;
-    border: 1px solid #fecaca;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border-strong);
 }
 
 .table .btn-outline-danger:hover {
-    background: #fef2f2;
-    color: #b91c1c;
-    border-color: #fca5a5;
+    background: var(--text-muted);
+    color: white;
+    border-color: var(--text-muted);
 }
 
 /* Sil */
 .table .btn-danger {
-    background: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
 }
 
 .table .btn-danger:hover {
-    background: #dc2626;
+    background: var(--text-muted);
     color: white;
-    border-color: #dc2626;
+    border-color: var(--text-muted);
 }
 
 /* İşlem butonları arası boşluk */
@@ -991,9 +990,9 @@ h6 {
 }
 
 .btn-clear {
-    background: white;
-    color: #475569;
-    border: 1px solid #e2e8f0;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 22px;
     font-weight: 600;
@@ -1001,8 +1000,8 @@ h6 {
 }
 
 .btn-clear:hover {
-    background: #f8fafc;
-    color: #0f172a;
+    background: var(--surface-soft);
+    color: var(--text);
 }
 /* =========================
    APPOINTMENT CREATE PAGE
@@ -1021,11 +1020,11 @@ h6 {
 }
 
 .appointment-steps {
-    background: white;
+    background: var(--surface);
     padding: 20px 25px;
     border-radius: 12px;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
 }
@@ -1101,7 +1100,7 @@ h6 {
 .appointment-section {
     padding-bottom: 25px;
     margin-bottom: 25px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
 }
 
 .appointment-section:last-of-type {
@@ -1160,7 +1159,7 @@ h6 {
     align-items: center;
     gap: 13px;
     padding: 15px 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
 }
 
 .summary-icon {
@@ -1191,8 +1190,8 @@ h6 {
 .appointment-summary-info {
     margin-top: 20px;
     padding: 13px 15px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
     color: var(--text);
     border-radius: 10px;
     font-size: 0.86rem;
@@ -1239,8 +1238,8 @@ h6 {
 
 .category-card {
     height: 100%;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 22px;
     display: flex;
@@ -1293,45 +1292,78 @@ h6 {
 }
 
 
-/* EMPTY STATE */
+/* =========================
+   EMPTY STATE COMPONENT
+========================= */
 
-.empty-category-state {
-    background: white;
-
-    border: 1px dashed #cbd5e1;
+.empty-state {
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
     border-radius: 20px;
-
     padding: 60px 20px;
-
     text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 800px;
 }
 
-.empty-category-icon {
-    font-size: 3rem;
-
-    margin-bottom: 15px;
+.empty-state:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
-.empty-category-state h4 {
+.empty-state-icon {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-soft);
+    border-radius: 50%;
+    color: var(--primary);
+}
+
+.empty-state-icon svg {
+    width: 60px;
+    height: 60px;
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+.empty-state h4 {
     font-weight: 800;
+    color: var(--text);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
 }
 
-.empty-category-state p {
-    color: #64748b;
-
-    margin-bottom: 20px;
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin: 0 auto 30px auto;
+    line-height: 1.6;
 }
-/* CATEGORY CREATE */
+
+/* 
+ CATEGORY CREATE */
 
 .category-example-box {
-    background: #f8fafc;
+    background: var(--surface-soft);
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 14px;
 
     padding: 16px 18px;
 
-    color: #475569;
+    color: var(--text-muted);
 }
 
 .category-example-box strong {
@@ -1345,10 +1377,80 @@ h6 {
 
 .category-example-box span {
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text);
 }
 
 .category-example-box small {
     margin-top: 3px;
     color: #64748b;
+}
+
+/* =========================
+   DARK MODE TOGGLE BUTTON
+========================= */
+
+.theme-toggle-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--primary);
+    border: 2px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1050;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Glassmorphism */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Fallback for background based on current mode */
+html:not([data-mode="dark"]) .theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+html[data-mode="dark"] .theme-toggle-btn {
+    background: rgba(30, 41, 59, 0.85);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-5px) rotate(15deg);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px -5px var(--primary-soft), 0 8px 10px -6px var(--primary-soft);
+}
+
+.theme-toggle-btn svg {
+    width: 28px;
+    height: 28px;
+    transition: transform 0.5s ease;
+}
+
+.theme-toggle-btn:active svg {
+    transform: scale(0.85);
+}
+
+/* MAGIC: Pure CSS Icon Switching */
+/* When mode is dark, show Sun, hide Moon */
+html[data-mode="dark"] .icon-moon {
+    display: none;
+}
+html[data-mode="dark"] .icon-sun {
+    display: block;
+    color: #fbbf24; /* Yellow sun */
+}
+
+/* When mode is anything else (Light), show Moon, hide Sun */
+html:not([data-mode="dark"]) .icon-sun {
+    display: none;
+}
+html:not([data-mode="dark"]) .icon-moon {
+    display: block;
+    color: var(--primary); /* Moon matches theme */
 }

@@ -27,8 +27,14 @@
 
 @if (Model == null || Model.Count == 0)
 {
-    <div class="alert alert-light border">
-        Size atanmış herhangi bir randevu bulunmuyor.
+    <div class="empty-state animate-fade-in-up mt-4">
+        <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 8h1a4 4 0 010 8h-1m-3.05 4A9.968 9.968 0 0112 21c-5.523 0-10-4.477-10-10S6.477 1 12 1c4.54 0 8.375 3.033 9.61 7H3.94m11 10A9.968 9.968 0 0022 11h-7m-4 10V11m-4 10V11"/>
+            </svg>
+        </div>
+        <h4>Şu an için bekleyen randevunuz yok</h4>
+        <p>Arkanıza yaslanın, kahvenizin tadını çıkarın ve bir sonraki danışanınızı beklerken rahatlayın!</p>
     </div>
 }
 else

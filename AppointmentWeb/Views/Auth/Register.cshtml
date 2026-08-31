@@ -6,12 +6,12 @@
 
 <div class="row justify-content-center mt-5 mb-5">
     <div class="col-lg-10">
-        <div class="card border-0 overflow-hidden" style="border-radius: 30px; box-shadow: 0 15px 40px rgba(167, 139, 250, 0.15);">
+        <div class="card border-0 overflow-hidden" style="border-radius: 30px; box-shadow: var(--shadow-lg);">
             <div class="row g-0 flex-row-reverse">
                 <!-- Sağ Kolon: Görsel (Reversed) -->
                 <div class="col-md-6 d-none d-md-block position-relative">
                     <img src="~/images/login_illustration.jpg" asp-append-version="true" alt="Kayıt Ol" class="img-fluid h-100 w-100" style="object-fit: cover; transform: scaleX(-1);" />
-                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(167,139,250,0.2));"></div>
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, transparent, var(--primary-soft));"></div>
                 </div>
 
                 <!-- Sol Kolon: Form -->
@@ -19,9 +19,7 @@
                     <div class="card-body p-5 w-100">
 
                         <div class="text-center mb-4">
-                            <div class="d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 8px 25px rgba(125,42,232,0.4);">
-                                <i class="bi bi-calendar-check-fill text-white" style="font-size: 2.2rem;"></i>
-                            </div>
+                            <img src="~/images/favicon.jpg" alt="Logo" class="shadow-sm mb-2" style="width: 60px; height: 60px; border-radius: 16px; object-fit: cover;" asp-append-version="true" />
                         </div>
 
                         <h2 class="text-center mb-2" style="color: var(--primary-dark); font-weight: 800; font-size: 2.2rem;">Kayıt Ol 🚀</h2>

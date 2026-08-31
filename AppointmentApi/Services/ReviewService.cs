@@ -4,6 +4,7 @@ using AppointmentApi.Exceptions;
 using AppointmentApi.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using AppointmentApi.UnitOfWork;
 
 namespace AppointmentApi.Services
 {
@@ -11,11 +12,13 @@ namespace AppointmentApi.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ReviewService(AppDbContext context, IMapper mapper)
+        public ReviewService(AppDbContext context, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _context = context;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ReviewResponseDto> CreateAsync(CreateReviewDto dto, int userId)
@@ -53,7 +56,7 @@ namespace AppointmentApi.Services
             review.CreatedAt = DateTime.Now;
             
             _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // İlişkili verileri yükleyip DTO'ya çevirmek için Customer ve Staff'ı atayalım.
             var createdReview = await _context.Reviews

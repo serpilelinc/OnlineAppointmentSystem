@@ -1,7 +1,10 @@
 using AppointmentApi.Data;
 using AppointmentApi.Mappings;
 using AppointmentApi.Services;
+using AppointmentApi.UnitOfWork;
+using AppointmentApi.Hubs;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +29,29 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<BackgroundJobService>();
+
+builder.Services.AddSignalR();
+
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHangfireServer();
+
+// CORS for Web Frontend (SignalR needs credentials)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWeb",
+        b => b
+            .WithOrigins("http://localhost:5014")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
 
 // JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"]
@@ -111,11 +137,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowWeb");
+
 // Sıralama önemli
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
+RecurringJob.AddOrUpdate<BackgroundJobService>("daily-appointments-job", x => x.ProcessDailyAppointmentsAsync(), "0 0 * * *");
+
 app.MapControllers();
+app.MapHub<AppointmentHub>("/hubs/appointment");
 
 
 app.Run();

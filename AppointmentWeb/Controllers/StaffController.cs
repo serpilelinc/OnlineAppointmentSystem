@@ -384,12 +384,12 @@ namespace AppointmentWeb.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, bool forceDelete = false)
         {
             var client = _apiClientService.CreateClient();
 
             var response = await client.DeleteAsync(
-                $"api/Staff/{id}"
+                $"api/Staff/{id}?forceDelete={forceDelete}"
             );
 
             if (!response.IsSuccessStatusCode)
@@ -409,6 +409,21 @@ namespace AppointmentWeb.Controllers
                 "Hizmet veren başarıyla silindi.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckFutureAppointments(int id)
+        {
+            var client = _apiClientService.CreateClient();
+            try
+            {
+                var count = await client.GetFromJsonAsync<int>($"api/Staff/{id}/future-appointments/count");
+                return Json(new { count = count });
+            }
+            catch
+            {
+                return Json(new { count = 0 });
+            }
         }
 
         /// <summary>

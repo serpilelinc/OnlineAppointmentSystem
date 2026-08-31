@@ -34,8 +34,18 @@
 
 @if (Model == null || Model.Count == 0)
 {
-    <div class="alert alert-light border">
-        Henüz bir randevunuz bulunmuyor.
+    <div class="empty-state animate-fade-in-up mt-4">
+        <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.5 13.5l1 1 2.5-2.5"/>
+            </svg>
+        </div>
+        <h4>Yaklaşan randevunuz bulunmuyor</h4>
+        <p>Zamanınızı güzelleştirmek ve ihtiyaçlarınıza vakit ayırmak için ilk randevunuzu hemen planlayın!</p>
+        <a asp-controller="Appointment" asp-action="Create" class="btn btn-primary px-4 py-2" style="border-radius: 12px; font-weight: 600;">
+            <i class="bi bi-calendar-plus-fill me-2"></i> Hemen Randevu Al
+        </a>
     </div>
 }
 else
@@ -122,7 +132,7 @@ else
 
             <button type="submit"
                     class="btn btn-outline-danger btn-sm"
-                    onclick="return confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?');">
+                    onclick="confirmFormSubmit(event, 'Bu randevuyu iptal etmek istediğinize emin misiniz?');">
                 İptal Et
             </button>
 

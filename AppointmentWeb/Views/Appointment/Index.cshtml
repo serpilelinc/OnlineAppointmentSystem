@@ -203,7 +203,7 @@
           asp-route-id="@appointment.Id"
           method="post"
           class="d-inline"
-          onsubmit="return confirm('Bu randevuyu silmek istediğinize emin misiniz?');">
+          onsubmit="confirmFormSubmit(event, 'Bu randevuyu silmek istediğinize emin misiniz?');">
 
         <button type="submit"
                 class="btn btn-danger btn-sm">

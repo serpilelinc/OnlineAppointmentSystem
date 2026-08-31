@@ -146,10 +146,18 @@ namespace AppointmentApi.Controllers
             });
         }
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("{id:int}/future-appointments/count")]
+        public async Task<ActionResult<int>> GetFutureAppointmentCount(int id)
         {
-            await _service.DeleteAsync(id);
+            var count = await _service.GetFutureAppointmentCountAsync(id);
+            return Ok(count);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id, [FromQuery] bool forceDelete = false)
+        {
+            await _service.DeleteAsync(id, forceDelete);
 
             return Ok(new
             {

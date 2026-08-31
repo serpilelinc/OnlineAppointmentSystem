@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using AppointmentApi.Exceptions;
+using AppointmentApi.UnitOfWork;
 
 namespace AppointmentApi.Services
 {
@@ -17,15 +18,18 @@ namespace AppointmentApi.Services
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IConfiguration _configuration;
         private readonly EmailService _emailService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(
             AppDbContext context,
             IConfiguration configuration,
-            EmailService emailService)
+            EmailService emailService,
+            IUnitOfWork unitOfWork)
         {
             _context = context;
             _configuration = configuration;
             _emailService = emailService;
+            _unitOfWork = unitOfWork;
             _passwordHasher = new PasswordHasher<User>();
         }
 
@@ -72,7 +76,7 @@ namespace AppointmentApi.Services
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Token 7 gün geçerli.
             
             // 7. Tüm bu değişiklikleri veritabanına kaydediyoruz.
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // 8. Ön yüze (Web veya Mobil) döndürülecek yanıtı hazırlıyoruz.
             // İşlem bitiminde kullanıcıya, sisteme giriş yapabilmesi için bir JWT (Json Web Token) üretiyoruz.
@@ -126,7 +130,7 @@ namespace AppointmentApi.Services
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             
             // Refresh Token'ı veritabanında güncelliyoruz.
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // 4. API'ye yapılan diğer isteklerde (Randevu alma vb.) kullanılmak üzere 
             // kullanıcının kimlik kartı niteliğindeki JWT Token'ı üretip Ön Yüze (Web/Mobil) dönüyoruz.
@@ -176,43 +180,53 @@ namespace AppointmentApi.Services
 );
             }
 
-            var user = new User
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                FullName = staff.FullName,
-                Email = email,
-                Role = "Staff"
-            };
+                var user = new User
+                {
+                    FullName = staff.FullName,
+                    Email = email,
+                    Role = "Staff"
+                };
 
-            user.PasswordHash =
-                _passwordHasher.HashPassword(
-                    user,
-                    dto.Password
-                );
+                user.PasswordHash =
+                    _passwordHasher.HashPassword(
+                        user,
+                        dto.Password
+                    );
 
-            _context.Users.Add(user);
+                _context.Users.Add(user);
 
-            await _context.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
 
-            staff.UserId = user.Id;
+                staff.UserId = user.Id;
 
-            var refreshToken = GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            
-            await _context.SaveChangesAsync();
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
 
-            return new AuthResponseDto
+                return new AuthResponseDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Token = GenerateJwtToken(user),
+                    RefreshToken = refreshToken,
+                    Phone = user.Phone,
+                    EmailNotificationsEnabled = user.EmailNotificationsEnabled,
+                    SmsNotificationsEnabled = user.SmsNotificationsEnabled
+                };
+            }
+            catch
             {
-                Id = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                Role = user.Role,
-                Token = GenerateJwtToken(user),
-                RefreshToken = refreshToken,
-                Phone = user.Phone,
-                EmailNotificationsEnabled = user.EmailNotificationsEnabled,
-                SmsNotificationsEnabled = user.SmsNotificationsEnabled
-            };
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public async Task<bool> StaffHasUserAccountAsync(int staffId)
         {
@@ -297,7 +311,7 @@ namespace AppointmentApi.Services
 
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return new AuthResponseDto
             {
@@ -318,7 +332,7 @@ namespace AppointmentApi.Services
             var resetToken = GenerateRefreshToken(); // Rastgele güvenli token üretmek için aynı metodu kullanabiliriz
             user.ResetPasswordToken = resetToken;
             user.ResetPasswordTokenExpiry = DateTime.UtcNow.AddHours(1);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             var encodedToken = Uri.EscapeDataString(resetToken);
             var resetLink = $"{resetUrlBase}?token={encodedToken}&email={user.Email}";
@@ -346,7 +360,7 @@ namespace AppointmentApi.Services
             user.ResetPasswordToken = null;
             user.ResetPasswordTokenExpiry = null;
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return true;
         }
 
@@ -368,7 +382,7 @@ namespace AppointmentApi.Services
 
             // 2. Yeni şifreyi Hash'leyerek kaydet
             user.PasswordHash = _passwordHasher.HashPassword(user, newPassword);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return true;
         }

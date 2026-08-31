@@ -145,7 +145,7 @@ else
                       asp-route-id="@service.Id"
                       method="post"
                       class="d-inline"
-                      onsubmit="return confirm('Bu hizmeti silmek istediğinize emin misiniz?');">
+                      onsubmit="confirmFormSubmit(event, 'Bu hizmeti silmek istediğinize emin misiniz?');">
 
                     <button type="submit"
                             class="btn btn-danger btn-sm">

@@ -3,6 +3,7 @@ using AppointmentApi.Data;
 using AppointmentApi.DTOs;
 using AppointmentApi.Exceptions;
 using AppointmentApi.Models;
+using AppointmentApi.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppointmentApi.Services
@@ -11,11 +12,15 @@ namespace AppointmentApi.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly EmailService _emailService;
 
-        public StaffService(AppDbContext context, IMapper mapper)
+        public StaffService(AppDbContext context, IMapper mapper, IUnitOfWork unitOfWork, EmailService emailService)
         {
             _context = context;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _emailService = emailService;
         }
 
         public async Task<StaffResponseDto> CreateAsync(CreateStaffDto dto)
@@ -24,7 +29,7 @@ namespace AppointmentApi.Services
 
             _context.Staffs.Add(staff);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<StaffResponseDto>(staff);
         }
@@ -74,7 +79,7 @@ namespace AppointmentApi.Services
 
             _context.StaffServiceTypes.Add(staffServiceType);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         public async Task AddWorkingHourAsync(CreateStaffWorkingHourDto dto)
         {
@@ -118,7 +123,7 @@ namespace AppointmentApi.Services
 
             _context.StaffWorkingHours.Add(workingHour);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         public async Task<List<StaffResponseDto>> GetByServiceTypeAsync(
             int serviceTypeId)
@@ -213,7 +218,7 @@ namespace AppointmentApi.Services
             staff.Email = dto.Email.Trim().ToLower();
             staff.Title = dto.Title.Trim();
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<StaffResponseDto>(staff);
         }
@@ -239,7 +244,7 @@ namespace AppointmentApi.Services
 
             _context.StaffServiceTypes.Remove(assignment);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         public async Task DeleteWorkingHourAsync(int id)
         {
@@ -255,7 +260,7 @@ namespace AppointmentApi.Services
 
             _context.StaffWorkingHours.Remove(workingHour);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         
         public async Task DeleteAllWorkingHoursByStaffAsync(int staffId)
@@ -267,7 +272,7 @@ namespace AppointmentApi.Services
             if (workingHours.Any())
             {
                 _context.StaffWorkingHours.RemoveRange(workingHours);
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 
@@ -303,7 +308,13 @@ namespace AppointmentApi.Services
 
             return _mapper.Map<List<StaffResponseDto>>(staffs);
         }
-        public async Task DeleteAsync(int id)
+        public async Task<int> GetFutureAppointmentCountAsync(int staffId)
+        {
+            return await _context.Appointments
+                .CountAsync(a => a.StaffId == staffId && a.AppointmentDate > DateTime.Now && a.Status != "Cancelled");
+        }
+
+        public async Task DeleteAsync(int id, bool forceDelete = false)
         {
             var staff = await _context.Staffs
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -315,57 +326,83 @@ namespace AppointmentApi.Services
                 );
             }
 
-            var hasAppointments =
-                await _context.Appointments
-                    .AnyAsync(x => x.StaffId == id);
+            var futureAppointments = await _context.Appointments
+                .Where(a => a.StaffId == id && a.AppointmentDate > DateTime.Now && a.Status != "Cancelled")
+                .ToListAsync();
 
-            if (hasAppointments)
+            if (futureAppointments.Any() && !forceDelete)
             {
-                throw new ConflictException(
-                    "Bu hizmet verene ait randevu kayıtları bulunduğu için silinemez."
-                );
+                throw new ConflictException("Bu hizmet verene ait gelecek randevular bulunmaktadır.");
             }
 
-            var serviceAssignments =
-                await _context.StaffServiceTypes
-                    .Where(x => x.StaffId == id)
-                    .ToListAsync();
-
-            if (serviceAssignments.Count > 0)
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                _context.StaffServiceTypes.RemoveRange(
-                    serviceAssignments
-                );
-            }
-
-            var workingHours =
-                await _context.StaffWorkingHours
-                    .Where(x => x.StaffId == id)
-                    .ToListAsync();
-
-            if (workingHours.Count > 0)
-            {
-                _context.StaffWorkingHours.RemoveRange(
-                    workingHours
-                );
-            }
-
-            if (staff.UserId.HasValue)
-            {
-                var user = await _context.Users
-                    .FirstOrDefaultAsync(
-                        x => x.Id == staff.UserId.Value
-                    );
-
-                if (user != null)
+                if (forceDelete && futureAppointments.Any())
                 {
-                    _context.Users.Remove(user);
+                    foreach (var app in futureAppointments)
+                    {
+                        app.Status = "Cancelled";
+                        if (!string.IsNullOrEmpty(app.CustomerEmail))
+                        {
+                            await _emailService.SendEmailAsync(
+                                app.CustomerEmail,
+                                "Randevunuz İptal Edildi",
+                                $"<p>Merhaba {app.CustomerName},</p>" +
+                                $"<p><strong>{app.AppointmentDate.ToString("dd.MM.yyyy HH:mm")}</strong> tarihli randevunuz personelin ayrılması sebebiyle iptal edilmiştir. Lütfen aynı tarih ve saat için sistemimizden tekrar randevu alınız.</p>"
+                            );
+                        }
+                    }
                 }
+
+                var serviceAssignments =
+                    await _context.StaffServiceTypes
+                        .Where(x => x.StaffId == id)
+                        .ToListAsync();
+
+                if (serviceAssignments.Count > 0)
+                {
+                    _context.StaffServiceTypes.RemoveRange(
+                        serviceAssignments
+                    );
+                }
+
+                var workingHours =
+                    await _context.StaffWorkingHours
+                        .Where(x => x.StaffId == id)
+                        .ToListAsync();
+
+                if (workingHours.Count > 0)
+                {
+                    _context.StaffWorkingHours.RemoveRange(
+                        workingHours
+                    );
+                }
+
+                if (staff.UserId.HasValue)
+                {
+                    var user = await _context.Users
+                        .FirstOrDefaultAsync(
+                            x => x.Id == staff.UserId.Value
+                        );
+
+                    if (user != null)
+                    {
+                        _context.Users.Remove(user);
+                    }
+                }
+
+                _context.Staffs.Remove(staff);
+
+                await _unitOfWork.SaveChangesAsync();
+            
+                await _unitOfWork.CommitAsync();
             }
-
-            _context.Staffs.Remove(staff);
-
-            await _context.SaveChangesAsync();
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
     }
 }

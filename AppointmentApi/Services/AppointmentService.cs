@@ -4,6 +4,9 @@ using AppointmentApi.DTOs;
 using AppointmentApi.Models;
 using Microsoft.EntityFrameworkCore;
 using AppointmentApi.Exceptions;
+using AppointmentApi.UnitOfWork;
+using Microsoft.AspNetCore.SignalR;
+using AppointmentApi.Hubs;
 
 
 namespace AppointmentApi.Services
@@ -13,12 +16,21 @@ namespace AppointmentApi.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly EmailService _emailService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<AppointmentHub> _hubContext;
 
-        public AppointmentService(AppDbContext context, IMapper mapper, EmailService emailService)
+        public AppointmentService(
+            AppDbContext context, 
+            IMapper mapper, 
+            EmailService emailService, 
+            IUnitOfWork unitOfWork,
+            IHubContext<AppointmentHub> hubContext)
         {
             _context = context;
             _mapper = mapper;
             _emailService = emailService;
+            _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -55,7 +67,7 @@ namespace AppointmentApi.Services
             }
 
             // --- 2. TARİH VE ZAMAN KONTROLLERİ ---
-            // Geçmiş bir tarihe randevu alınamaz. Zaman makinesi henüz icat edilmedi!
+            // Geçmiş bir tarihe randevu alınamaz.
             if (dto.AppointmentDate <= DateTime.Now)
             {
                 throw new ConflictException("Geçmiş bir tarihe randevu oluşturulamaz.");
@@ -106,6 +118,22 @@ namespace AppointmentApi.Services
                 throw new ConflictException("Seçilen personelin bu tarih ve saatte başka bir randevusu bulunmaktadır.");
             }
 
+            // Müşterinin (UserId) aynı tarih ve saatte (çakışan) başka bir randevusu var mı?
+            var hasCustomerConflict = await _context.Appointments
+                .Include(a => a.ServiceType)
+                .AnyAsync(a =>
+                    a.UserId == userId &&
+                    a.Status != "Cancelled" &&
+                    a.ServiceType != null &&
+                    newStart < a.AppointmentDate.AddMinutes(a.ServiceType.DurationMinutes) &&
+                    newEnd > a.AppointmentDate
+                );
+
+            if (hasCustomerConflict)
+            {
+                throw new ConflictException("Bu tarih ve saatte zaten başka bir randevunuz bulunmaktadır. Lütfen farklı bir saat seçiniz.");
+            }
+
             // --- 5. KAYIT OLUŞTURMA ---
             // Bütün güvenlik duvarlarından geçtiyse DTO'dan Entity'ye dönüşüm yapıyoruz.
             var appointment = _mapper.Map<Appointment>(dto);
@@ -118,9 +146,12 @@ namespace AppointmentApi.Services
             _context.Appointments.Add(appointment);
             
             // İşlemleri veritabanına fiziksel olarak yazar.
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             
             // --- 6. BİLDİRİM (NOTIFICATION) ---
+            // Anlık SignalR Bildirimi
+            await _hubContext.Clients.All.SendAsync("ReceiveNewAppointment", appointment.CustomerName, appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm"));
+
             // Müşteriye randevu talebinin alındığına dair e-posta göndeririz.
             await _emailService.SendEmailAsync(
                 appointment.CustomerEmail, 
@@ -282,7 +313,7 @@ namespace AppointmentApi.Services
 
             _mapper.Map(dto, appointment);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             appointment.ServiceType = serviceType;
             appointment.Staff = staff;
@@ -300,7 +331,7 @@ namespace AppointmentApi.Services
 
             _context.Appointments.Remove(appointment);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return true;
         }
@@ -342,7 +373,7 @@ namespace AppointmentApi.Services
 
             appointment.Status = dto.Status;
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // Email Notification to Customer based on new status
             string subject = "";
@@ -401,7 +432,7 @@ namespace AppointmentApi.Services
 
             appointment.Status = "Cancelled";
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // Email Notification to Staff
             if (appointment.Staff != null && !string.IsNullOrEmpty(appointment.Staff.Email))
